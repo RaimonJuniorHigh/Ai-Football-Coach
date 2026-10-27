@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -36,6 +34,7 @@ import com.aifootballcoach.trainer.data.Player
 import com.aifootballcoach.trainer.data.Position
 import com.aifootballcoach.trainer.theme.CoachColors
 import com.aifootballcoach.trainer.ui.components.FieldLabel
+import com.aifootballcoach.trainer.ui.components.InitialsAvatar
 import com.aifootballcoach.trainer.ui.components.StepScaffold
 
 /**
@@ -151,20 +150,11 @@ private fun PlayerRow(player: Player) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp),
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.size(36.dp).clip(CircleShape).background(CoachColors.Chip),
-        ) {
-            Text(
-                player.initials,
-                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                color = CoachColors.Muted,
-            )
-        }
+        InitialsAvatar(player.initials)
         Spacer(Modifier.width(12.dp))
         Column {
             Text(player.name, style = MaterialTheme.typography.titleMedium, color = CoachColors.Ink)
-            Text(player.position.label, style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
+            Text(player.role, style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
         }
     }
 }

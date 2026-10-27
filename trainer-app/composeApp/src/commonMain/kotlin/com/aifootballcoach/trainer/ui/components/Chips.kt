@@ -26,12 +26,13 @@ fun ToggleChip(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    selectedColor: Color = CoachColors.Pitch,
 ) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .clip(RoundedCornerShape(percent = 50))
-            .background(if (selected) CoachColors.Pitch else CoachColors.Chip)
+            .background(if (selected) selectedColor else CoachColors.Chip)
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 10.dp),
     ) {

@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.aifootballcoach.trainer.theme.CoachColors
 
@@ -22,6 +23,7 @@ fun PillButton(
     containerColor: Color = CoachColors.Ink,
     contentColor: Color = Color.White,
     enabled: Boolean = true,
+    height: Dp = 56.dp,
 ) {
     Button(
         onClick = onClick,
@@ -33,7 +35,7 @@ fun PillButton(
             disabledContainerColor = containerColor.copy(alpha = 0.3f),
             disabledContentColor = contentColor.copy(alpha = 0.7f),
         ),
-        modifier = modifier.fillMaxWidth().height(56.dp),
+        modifier = modifier.fillMaxWidth().height(height),
     ) {
         Text(text, style = MaterialTheme.typography.labelLarge)
     }

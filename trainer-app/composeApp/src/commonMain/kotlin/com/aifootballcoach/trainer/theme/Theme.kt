@@ -21,6 +21,9 @@ object CoachColors {
     val Track = Color(0xFFDAD7D0)        // inactive progress segments
     val Muted = Color(0xFF6B6A64)        // secondary text
     val OnPitchMuted = Color(0xFFC9D3C6) // secondary text on green
+    val PitchSoft = Color(0xFFDDE8D5)    // "Review" tag background
+    val Alert = Color(0xFFB5452A)        // stalled / no movement
+    val AlertSoft = Color(0xFFF7DDCD)    // "Stalled" tag background
 }
 
 private val Display = TextStyle(

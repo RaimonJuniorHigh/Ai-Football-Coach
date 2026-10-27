@@ -37,3 +37,6 @@ From the Claude design "AI Football Coach - Trainer App v2":
 | 11 | Onboarding · welcome |
 | 12 | Onboarding · your team (step 1 of 3) |
 | 13 | Onboarding · add players (step 2 of 3) |
+| 14 | Onboarding · invite players (step 3 of 3) |
+| 02 | Today (trainer dashboard) |
+| 03 | Squad |

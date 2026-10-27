@@ -1,26 +1,19 @@
 package com.aifootballcoach.trainer
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import com.aifootballcoach.trainer.data.MockTeamRepository
 import com.aifootballcoach.trainer.data.TeamRepository
-import com.aifootballcoach.trainer.theme.CoachColors
 import com.aifootballcoach.trainer.theme.CoachTheme
+import com.aifootballcoach.trainer.ui.home.MainShell
 import com.aifootballcoach.trainer.ui.onboarding.AddPlayersScreen
+import com.aifootballcoach.trainer.ui.onboarding.InvitePlayersScreen
 import com.aifootballcoach.trainer.ui.onboarding.TeamSetupScreen
 import com.aifootballcoach.trainer.ui.onboarding.WelcomeScreen
 
@@ -29,6 +22,7 @@ private enum class Screen(val darkBackground: Boolean = false) {
     TeamSetup,
     AddPlayers,
     InvitePlayers,
+    Main,
 }
 
 /**
@@ -44,13 +38,15 @@ fun App(
     var screen by remember { mutableStateOf(Screen.Welcome) }
     var team by remember { mutableStateOf(repository.loadTeam()) }
     var players by remember { mutableStateOf(repository.players()) }
+    @Suppress("DEPRECATION")
+    val clipboard = LocalClipboardManager.current
 
     LaunchedEffect(screen) { onDarkBackground(screen.darkBackground) }
 
     CoachTheme {
         when (screen) {
             Screen.Welcome -> WelcomeScreen(
-                trainerName = "Tom",
+                trainerName = repository.trainer().firstName,
                 onStart = { screen = Screen.TeamSetup },
             )
 
@@ -73,18 +69,14 @@ fun App(
                 onNext = { screen = Screen.InvitePlayers },
             )
 
-            // Design screen 14 is the next batch; placeholder keeps the flow navigable.
-            Screen.InvitePlayers -> Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize().background(CoachColors.Paper).padding(32.dp),
-            ) {
-                Text(
-                    "Step 3 · Invite players\ncomes in the next batch",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = CoachColors.Muted,
-                    textAlign = TextAlign.Center,
-                )
-            }
+            Screen.InvitePlayers -> InvitePlayersScreen(
+                teamLink = repository.teamLink(),
+                onShare = { /* TODO: platform share sheet */ },
+                onCopy = { clipboard.setText(AnnotatedString("https://${repository.teamLink()}")) },
+                onDone = { screen = Screen.Main },
+            )
+
+            Screen.Main -> MainShell(repository)
         }
     }
 }

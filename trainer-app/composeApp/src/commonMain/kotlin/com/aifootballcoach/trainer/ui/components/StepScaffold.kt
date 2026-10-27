@@ -23,7 +23,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import com.aifootballcoach.trainer.theme.CoachColors
 
 /** Segmented progress bar at the top of the onboarding steps. */
@@ -102,5 +104,19 @@ fun FieldLabel(text: String, modifier: Modifier = Modifier) {
         style = MaterialTheme.typography.labelSmall,
         color = CoachColors.Muted,
         modifier = modifier.padding(bottom = 8.dp),
+    )
+}
+
+/** Uppercase, letter-spaced section header, e.g. "NEEDS YOU". */
+@Composable
+fun SectionLabel(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text.uppercase(),
+        style = MaterialTheme.typography.labelSmall.copy(
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = 0.12.em,
+        ),
+        color = CoachColors.Muted,
+        modifier = modifier.padding(start = 4.dp, bottom = 8.dp),
     )
 }
