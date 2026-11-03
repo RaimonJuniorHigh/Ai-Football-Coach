@@ -1,12 +1,12 @@
 ## Wat verandert er en waarom?
 
 ## Hoe heb ik het getest?
-- [ ] Tests slagen (`./gradlew :composeApp:desktopTest`)
-- [ ] Op emulator of telefoon geprobeerd
+- [ ] Ik heb de tests gedraaid (`./gradlew :composeApp:desktopTest`) en ze slagen
+- [ ] Ik heb het zelf op een emulator of telefoon geprobeerd
 
 ## Raakt dit het werk van de ander?
-- [ ] Database (nieuw migratiebestand, ook online nodig?)
-- [ ] `TeamRepository` of modellen in `data/`
+- [ ] Database (nieuw migratiebestand, moet het ook online?)
+- [ ] `TeamRepository` of de modellen in `data/`
 - [ ] Schermen of ontwerp
 - [ ] Niets hiervan
 
