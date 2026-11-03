@@ -1,0 +1,23 @@
+# Build-uitvoer en caches
+/build
+/captures
+.gradle
+.kotlin
+.externalNativeBuild
+.cxx
+
+# Lokale instellingen (per computer anders)
+local.properties
+*.iml
+.DS_Store
+
+# Persoonlijke Android Studio-instellingen
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+/.idea/deploymentTargetSelector.xml
+/.idea/deviceManager.xml
+/.idea/vcs.xml
