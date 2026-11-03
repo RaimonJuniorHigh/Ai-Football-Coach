@@ -14,19 +14,11 @@ enum class Weekday(val short: String) {
 /** Whether a player is available for the next session. */
 enum class Availability { In, Out }
 
-/** Something about the player the trainer should look at. */
-enum class PlayerFlag { Stalled, Review }
-
 data class Player(
     val id: String,
     val name: String,
     val position: Position,
-    /** Specific role shown under the name, e.g. "Rechtsback". */
-    val role: String = position.label,
     val availability: Availability = Availability.In,
-    val flag: PlayerFlag? = null,
-    val age: Int? = null,
-    val shirtNumber: Int? = null,
 ) {
     val firstName: String get() = name.substringBefore(' ')
 
@@ -43,17 +35,10 @@ data class Team(
     val sessionMinutes: Int,
 )
 
-data class Trainer(
-    val firstName: String,
-    val lastName: String,
-) {
-    val initials: String get() = "${firstName.first()}${lastName.first()}"
-}
-
-/** An AI-drafted session waiting for the trainer's review. */
+/** A session draft the trainer made with the brief, waiting for review. */
 data class SessionDraft(
     val day: String,
-    val time: String,
+    val dateLabel: String,
     val theme: String,
     val minutes: Int,
 )
@@ -64,40 +49,14 @@ data class Attention(
     val detail: String,
 )
 
-/** Area a development point belongs to; the chips on the "new point" sheet. */
-enum class PointCategory(val label: String) {
-    Defending("Verdedigen"),
-    Passing("Passen"),
-    Speed("Snelheid"),
-    BallControl("Balcontrole"),
-}
-
-/** Something a player works on, scored 1–5 by the trainer after sessions. */
-data class DevelopmentPoint(
-    val id: String,
-    val playerId: String,
-    val title: String,
-    val category: PointCategory,
-    val score: Double,
-    /** Change since the previous reading; `null` when there's only one reading so far. */
-    val change: Double?,
-    val weeksOpen: Int,
-)
-
-data class PlayerStats(
-    val sessions: Int,
-    val attendancePercent: Int,
-)
-
 /** The next training on the calendar, as shown in step 1 of the brief. */
 data class PlannedSession(
     val day: String,
     val dateLabel: String,
-    val time: String,
     val minutes: Int,
 )
 
-/** A focus theme the assistant suggests for a session, with why. */
+/** A focus theme suggested from the squad's stats, with why. */
 data class FocusSuggestion(
     val id: String,
     val title: String,
@@ -115,7 +74,7 @@ enum class Intensity(val label: String) {
     High("Zwaar"),
 }
 
-/** Everything the trainer fills in before the assistant drafts a session. */
+/** Everything the trainer fills in before a session draft is made. */
 data class SessionBrief(
     val session: PlannedSession,
     val absentPlayerIds: Set<String>,

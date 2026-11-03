@@ -18,7 +18,7 @@ import kotlinx.coroutines.delay
 
 private enum class BriefStep { Who, Focus, Conditions, Drafting }
 
-/** How long each line on the drafting screen takes in the mock. */
+/** How long each line on the drafting screen stays up. */
 private const val DraftStepMillis = 1100L
 
 /**
@@ -91,9 +91,9 @@ fun BriefFlow(
         BriefStep.Drafting -> {
             val available = players.size - absentIds.size
             val draftSteps = listOf(
-                "Open punten van $available spelers gelezen",
-                "Laatste 4 trainingen bekeken",
-                if (space == PitchSpace.Half) "Oefeningen kiezen die op een half veld passen" else "Oefeningen kiezen voor een heel veld",
+                "Stats van $available spelers gelezen",
+                "Thema's gekozen",
+                if (space == PitchSpace.Half) "Concept voor een half veld opgeslagen" else "Concept voor een heel veld opgeslagen",
             )
             var stepsDone by remember { mutableIntStateOf(0) }
             LaunchedEffect(Unit) {

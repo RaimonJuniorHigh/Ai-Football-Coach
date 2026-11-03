@@ -27,34 +27,36 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aifootballcoach.trainer.data.DevelopmentPoint
+import com.aifootballcoach.trainer.data.DrillResult
+import com.aifootballcoach.trainer.data.MatchAppearance
+import com.aifootballcoach.trainer.data.PlayerProfile
+import com.aifootballcoach.trainer.data.RatingColors
+import com.aifootballcoach.trainer.data.StatType
+import com.aifootballcoach.trainer.data.formatShortDate
 import com.aifootballcoach.trainer.data.Player
-import com.aifootballcoach.trainer.data.PlayerStats
 import com.aifootballcoach.trainer.theme.CoachColors
 import com.aifootballcoach.trainer.ui.components.CoachIcons
 import com.aifootballcoach.trainer.ui.components.InitialsAvatar
 import com.aifootballcoach.trainer.ui.components.PillButton
 import com.aifootballcoach.trainer.ui.components.SectionLabel
 import com.aifootballcoach.trainer.ui.components.StatCard
-import kotlin.math.abs
-import kotlin.math.roundToInt
+import com.aifootballcoach.trainer.ui.squad.OverallBadge
 
-/** Highest score on the 1–5 scale; the progress bars fill up to this. */
-private const val MaxScore = 5.0
+/** Highest stat; the bars fill up to this. */
+private const val MaxStat = 20f
 
-/** Design screen 04 — "Player", with the player's development points. */
+/** The player page: overall, the eight stats, the latest training results and matches. */
 @Composable
 fun PlayerScreen(
     player: Player,
-    stats: PlayerStats,
-    points: List<DevelopmentPoint>,
+    profile: PlayerProfile?,
+    loadError: String? = null,
     onBack: () -> Unit,
-    onAddPoint: () -> Unit,
-    onOpenPoint: (DevelopmentPoint) -> Unit,
-    onLogObservation: () -> Unit,
+    onRecordDrill: () -> Unit,
 ) {
     Column(
         Modifier
@@ -88,91 +90,98 @@ fun PlayerScreen(
                     textStyle = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp, fontWeight = FontWeight.Bold),
                 )
                 Spacer(Modifier.width(14.dp))
-                Column {
+                Column(Modifier.weight(1f)) {
                     Text(
                         player.name,
                         style = MaterialTheme.typography.headlineLarge.copy(fontSize = 26.sp, lineHeight = 30.sp),
                         color = CoachColors.Ink,
                     )
-                    Text(subtitle(player), style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
+                    Text(player.position.label, style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
                 }
+                OverallBadge(profile?.overall)
             }
 
-            Spacer(Modifier.height(18.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                StatCard(stats.sessions.toString(), "trainingen", Modifier.weight(1f))
-                StatCard("${stats.attendancePercent}%", "aanwezig", Modifier.weight(1f))
-                StatCard(points.size.toString(), "open punten", Modifier.weight(1f))
+            if (loadError != null) {
+                Spacer(Modifier.height(16.dp))
+                Text("Laden is niet gelukt: $loadError", style = MaterialTheme.typography.bodyMedium, color = CoachColors.Alert)
             }
 
-            Spacer(Modifier.height(24.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                SectionLabel("Ontwikkelpunten", Modifier.weight(1f))
-                Text(
-                    "+ Nieuw punt",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = CoachColors.Pitch,
-                    modifier = Modifier
-                        .padding(bottom = 8.dp)
-                        .clip(RoundedCornerShape(percent = 50))
-                        .clickable(onClick = onAddPoint)
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                )
-            }
-            if (points.isEmpty()) {
-                Text(
-                    "Nog geen ontwikkelpunten. Voeg er een toe om ${player.firstName} te volgen.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = CoachColors.Muted,
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                )
-            }
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                points.forEach { point -> PointCard(point) { onOpenPoint(point) } }
+            if (profile != null) {
+                Spacer(Modifier.height(18.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    StatCard(profile.overall?.toString() ?: "–", "totaal", Modifier.weight(1f))
+                    StatCard(profile.drills.size.toString(), "oefeningen", Modifier.weight(1f))
+                    StatCard(profile.matches.size.toString(), "wedstrijden", Modifier.weight(1f))
+                }
+
+                Spacer(Modifier.height(24.dp))
+                SectionLabel("Stats")
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    StatType.entries.forEach { type ->
+                        StatRow(type, profile.stats.firstOrNull { it.stat == type }?.rating)
+                    }
+                }
+
+                Spacer(Modifier.height(24.dp))
+                SectionLabel("Laatste oefeningen")
+                if (profile.drills.isEmpty()) {
+                    Text(
+                        "Nog geen oefeningen. Noteer er een om ${player.firstName} te volgen.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = CoachColors.Muted,
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                    )
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    profile.drills.forEach { DrillRow(it) }
+                }
+
+                Spacer(Modifier.height(24.dp))
+                SectionLabel("Wedstrijden")
+                if (profile.matches.isEmpty()) {
+                    Text("Nog geen wedstrijden.", style = MaterialTheme.typography.bodyMedium, color = CoachColors.Muted, modifier = Modifier.padding(horizontal = 4.dp))
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    profile.matches.forEach { MatchRow(it) }
+                }
             }
             Spacer(Modifier.height(16.dp))
         }
 
         PillButton(
-            text = "Observatie noteren",
-            onClick = onLogObservation,
-            enabled = points.isNotEmpty(),
+            text = "Oefening noteren",
+            onClick = onRecordDrill,
             containerColor = CoachColors.Pitch,
             modifier = Modifier.padding(top = 8.dp, bottom = 12.dp),
         )
     }
 }
 
-private fun subtitle(player: Player) = listOfNotNull(
-    player.role,
-    player.age?.let { "$it jaar" },
-    player.shirtNumber?.let { "#$it" },
-).joinToString(" · ")
-
+/** One stat with its number from 1 to 20 and a bar in the colour of its level; a dash while there is no result. */
 @Composable
-private fun PointCard(point: DevelopmentPoint, onClick: () -> Unit) {
+private fun StatRow(type: StatType, rating: Int?) {
+    val color = rating?.let { Color(RatingColors.tierForStat(it).argb) } ?: CoachColors.Track
     Column(
         Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(CoachColors.Card)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 14.dp),
+            .padding(horizontal = 14.dp, vertical = 12.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                point.title,
+                type.label,
                 style = MaterialTheme.typography.titleMedium.copy(fontSize = 15.sp),
                 color = CoachColors.Ink,
                 modifier = Modifier.weight(1f),
             )
             Text(
-                point.score.oneDecimal(),
-                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                color = CoachColors.Pitch,
+                rating?.toString() ?: "–",
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, fontSize = 15.sp),
+                color = if (rating == null) CoachColors.Muted else CoachColors.Ink,
             )
         }
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(8.dp))
         Box(
             Modifier
                 .fillMaxWidth()
@@ -182,44 +191,67 @@ private fun PointCard(point: DevelopmentPoint, onClick: () -> Unit) {
         ) {
             Box(
                 Modifier
-                    .fillMaxWidth((point.score / MaxScore).toFloat().coerceIn(0f, 1f))
+                    .fillMaxWidth(((rating ?: 0) / MaxStat).coerceIn(0f, 1f))
                     .height(6.dp)
                     .clip(RoundedCornerShape(3.dp))
-                    .background(CoachColors.Pitch),
+                    .background(color),
             )
-        }
-        Spacer(Modifier.height(8.dp))
-        Row {
-            Text(weeksOpen(point.weeksOpen), style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp), color = CoachColors.Muted)
-            Spacer(Modifier.weight(1f))
-            Trend(point.change)
         }
     }
 }
 
 @Composable
-private fun Trend(change: Double?) {
-    val (text, color) = when {
-        change == null -> "Eerste meting" to CoachColors.Muted
-        abs(change) < 0.05 -> "Geen vooruitgang" to CoachColors.Alert
-        change > 0 -> "+${change.oneDecimal()}" to CoachColors.Pitch
-        else -> "−${(-change).oneDecimal()}" to CoachColors.Alert
+private fun DrillRow(drill: DrillResult) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(CoachColors.Card)
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(drill.stat.label, style = MaterialTheme.typography.titleMedium.copy(fontSize = 14.sp), color = CoachColors.Ink)
+            Text(formatShortDate(drill.recordedOn), style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
+        }
+        Text(
+            "${drill.successes} van ${drill.attempts}",
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+            color = CoachColors.Pitch,
+        )
     }
-    Text(
-        text,
-        style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp, fontWeight = FontWeight.SemiBold),
-        color = color,
+}
+
+@Composable
+private fun MatchRow(match: MatchAppearance) {
+    val goalsAndAssists = listOfNotNull(
+        match.goals.takeIf { it > 0 }?.let { "$it goal${if (it == 1) "" else "s"}" },
+        match.assists.takeIf { it > 0 }?.let { "$it assist${if (it == 1) "" else "s"}" },
     )
-}
-
-private fun weeksOpen(weeks: Int) = when (weeks) {
-    0 -> "Net toegevoegd"
-    1 -> "1 week open"
-    else -> "$weeks weken open"
-}
-
-/** Formats a score the Dutch way, with a decimal comma: 2.8 → "2,8". */
-internal fun Double.oneDecimal(): String {
-    val tenths = (this * 10).roundToInt()
-    return "${tenths / 10},${abs(tenths % 10)}"
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(CoachColors.Card)
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(
+                "${if (match.home) "Thuis" else "Uit"} tegen ${match.opponent}",
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 14.sp),
+                color = CoachColors.Ink,
+            )
+            Text(
+                (listOf("${formatShortDate(match.playedOn)}", "${match.minutes} min") + goalsAndAssists).joinToString(" · "),
+                style = MaterialTheme.typography.labelSmall,
+                color = CoachColors.Muted,
+            )
+        }
+        Text(
+            "${match.goalsFor}–${match.goalsAgainst}",
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+            color = CoachColors.Ink,
+        )
+    }
 }

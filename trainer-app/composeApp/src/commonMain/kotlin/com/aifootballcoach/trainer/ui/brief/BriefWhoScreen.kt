@@ -61,7 +61,7 @@ fun BriefWhoScreen(
             Column(Modifier.weight(1f)) {
                 Text("Training", style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp), color = CoachColors.Muted)
                 Text(
-                    "${session.dateLabel} · ${session.time}",
+                    session.dateLabel,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = CoachColors.Ink,
                 )

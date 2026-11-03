@@ -21,7 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.aifootballcoach.trainer.data.Availability
-import com.aifootballcoach.trainer.data.PlayerFlag
+import com.aifootballcoach.trainer.data.greetingFor
+import com.aifootballcoach.trainer.data.longLabel
+import com.aifootballcoach.trainer.data.now
 import com.aifootballcoach.trainer.data.TeamRepository
 import com.aifootballcoach.trainer.theme.CoachColors
 import com.aifootballcoach.trainer.ui.brief.BriefFlow
@@ -44,6 +46,8 @@ fun MainShell(
     var openPlayerId by remember { mutableStateOf<String?>(null) }
     var briefOpen by remember { mutableStateOf(false) }
     val players = remember { repository.players() }
+    // Read again each time the shell is shown, so new drill results show up after closing a player.
+    val needsYou = repository.needsYou()
 
     val statusBar = WindowInsets.statusBars.asPaddingValues()
     val navBar = WindowInsets.navigationBars.asPaddingValues()
@@ -73,17 +77,15 @@ fun MainShell(
     Box(Modifier.fillMaxSize().background(CoachColors.Paper)) {
         when (tab) {
             Tab.Today -> TodayScreen(
-                trainer = repository.trainer(),
-                // TODO: real date and time-of-day greeting once kotlinx-datetime is added.
-                dateLabel = "Dinsdag 22 september",
-                greeting = "Goedenavond",
+                dateLabel = now().date.longLabel(),
+                greeting = greetingFor(now().hour),
                 draft = repository.nextSessionDraft(),
                 stats = SquadStats(
                     available = players.count { it.availability == Availability.In },
                     squad = players.size,
-                    stalled = players.count { it.flag == PlayerFlag.Stalled },
+                    needsAttention = needsYou.size,
                 ),
-                needsYou = repository.needsYou(),
+                needsYou = needsYou,
                 onReviewDraft = { /* TODO: session review (design 07) */ },
                 onOpenAttention = { openPlayerId = it.player.id },
                 contentPadding = contentPadding,
@@ -92,6 +94,7 @@ fun MainShell(
             Tab.Squad -> SquadScreen(
                 teamName = repository.loadTeam().name,
                 players = players,
+                overall = { repository.overall(it.id) },
                 onOpenPlayer = { openPlayerId = it.id },
                 contentPadding = contentPadding,
             )

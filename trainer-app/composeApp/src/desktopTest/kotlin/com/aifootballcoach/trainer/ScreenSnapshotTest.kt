@@ -6,7 +6,6 @@ import androidx.compose.ui.ImageComposeScene
 import androidx.compose.ui.unit.Density
 import com.aifootballcoach.trainer.data.Availability
 import com.aifootballcoach.trainer.data.Intensity
-import com.aifootballcoach.trainer.data.MockTeamRepository
 import com.aifootballcoach.trainer.data.PitchSpace
 import com.aifootballcoach.trainer.theme.CoachTheme
 import com.aifootballcoach.trainer.ui.brief.BriefConditionsScreen
@@ -19,23 +18,23 @@ import com.aifootballcoach.trainer.ui.onboarding.AddPlayersScreen
 import com.aifootballcoach.trainer.ui.onboarding.InvitePlayersScreen
 import com.aifootballcoach.trainer.ui.onboarding.TeamSetupScreen
 import com.aifootballcoach.trainer.ui.onboarding.WelcomeScreen
-import com.aifootballcoach.trainer.ui.player.AddPointSheet
-import com.aifootballcoach.trainer.ui.player.LogObservationSheet
 import com.aifootballcoach.trainer.ui.player.PlayerScreen
+import com.aifootballcoach.trainer.ui.player.RecordDrillSheet
 import java.io.File
+import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
  * Renders each screen to a PNG in build/snapshots so the UI can be compared
- * with the Claude design without an emulator.
+ * with the design without an emulator.
  */
 class ScreenSnapshotTest {
-    private val repository = MockTeamRepository()
+    private val repository = FakeTeamRepository()
 
     @Test
     fun renderOnboardingScreens() {
-        snapshot("11-welcome") { WelcomeScreen(trainerName = "Tom", onStart = {}) }
+        snapshot("11-welcome") { WelcomeScreen(onStart = {}) }
         snapshot("12-your-team") {
             TeamSetupScreen(team = repository.loadTeam(), onTeamChange = {}, onNext = {})
         }
@@ -56,30 +55,16 @@ class ScreenSnapshotTest {
 
     @Test
     fun renderPlayerScreens() {
-        val sem = repository.players().first { it.id == "p2" }
-        val points = repository.developmentPoints(sem.id)
+        val sem = repository.players().first { it.id == "2" }
+        val profile = runBlocking { repository.playerProfile(sem.id) }
         val player: @Composable () -> Unit = {
-            PlayerScreen(
-                player = sem,
-                stats = repository.playerStats(sem.id),
-                points = points,
-                onBack = {},
-                onAddPoint = {},
-                onOpenPoint = {},
-                onLogObservation = {},
-            )
+            PlayerScreen(player = sem, profile = profile, onBack = {}, onRecordDrill = {})
         }
         snapshot("04-player", player)
-        snapshot("15-add-point") {
+        snapshot("15-record-drill") {
             Box {
                 player()
-                AddPointSheet(sem, onSave = { _, _, _ -> }, onDismiss = {}, initialTitle = "1-tegen-1 — binnenkant dichtzetten")
-            }
-        }
-        snapshot("16-log-observation") {
-            Box {
-                player()
-                LogObservationSheet(sem, points.first(), hasNextPlayer = true, onSave = { _, _ -> }, onDismiss = {}, initialRating = 4)
+                RecordDrillSheet(sem, onSave = { _, _, _ -> }, onDismiss = {}, initialAttempts = "100", initialSuccesses = "70")
             }
         }
     }
@@ -126,9 +111,9 @@ class ScreenSnapshotTest {
             DraftingScreen(
                 day = "Donderdag",
                 steps = listOf(
-                    "Open punten van 14 spelers gelezen",
-                    "Laatste 4 trainingen bekeken",
-                    "Oefeningen kiezen die op een half veld passen",
+                    "Stats van 14 spelers gelezen",
+                    "Thema's gekozen",
+                    "Concept voor een half veld opgeslagen",
                 ),
                 stepsDone = 2,
             )

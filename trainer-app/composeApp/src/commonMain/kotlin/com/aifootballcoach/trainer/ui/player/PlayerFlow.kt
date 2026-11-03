@@ -3,90 +3,81 @@ package com.aifootballcoach.trainer.ui.player
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
+import com.aifootballcoach.trainer.data.PlayerProfile
+import com.aifootballcoach.trainer.data.StatType
 import com.aifootballcoach.trainer.data.TeamRepository
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 
-private sealed interface PlayerSheet {
-    data object AddPoint : PlayerSheet
-    data class Observation(val pointId: String) : PlayerSheet
-}
-
-/**
- * Player page plus its two sheets. After saving an observation it moves straight
- * on to the next player with open points, so the trainer can go round the squad
- * after training.
- */
+/** Player page plus the sheet to note a training result. The profile is loaded from the database. */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun PlayerFlow(repository: TeamRepository, startPlayerId: String, onClose: () -> Unit) {
-    var playerId by remember { mutableStateOf(startPlayerId) }
-    var sheet by remember { mutableStateOf<PlayerSheet?>(null) }
-    // Bumped after every write so the lists below are read again from the repository.
+    val player = remember { repository.players().first { it.id == startPlayerId } }
+    var sheetOpen by remember { mutableStateOf(false) }
+    var sheetError by remember { mutableStateOf<String?>(null) }
+    var loadError by remember { mutableStateOf<String?>(null) }
+    var profile by remember { mutableStateOf<PlayerProfile?>(null) }
+    // Bumped after a result is saved so the profile is loaded again.
     var version by remember { mutableIntStateOf(0) }
+    val scope = rememberCoroutineScope()
 
-    val players = remember { repository.players() }
-    val player = players.first { it.id == playerId }
-    val points = remember(playerId, version) { repository.developmentPoints(playerId) }
-    val stats = remember(playerId) { repository.playerStats(playerId) }
-    val nextPlayer = remember(playerId, version) {
-        players.drop(players.indexOf(player) + 1)
-            .firstOrNull { repository.developmentPoints(it.id).isNotEmpty() }
+    LaunchedEffect(player.id, version) {
+        try {
+            profile = repository.playerProfile(player.id)
+            loadError = null
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            loadError = e.message ?: "Onbekende fout"
+        }
     }
 
     BackHandler {
-        if (sheet != null) sheet = null else onClose()
+        if (sheetOpen) sheetOpen = false else onClose()
     }
 
     Box(Modifier.fillMaxSize()) {
         PlayerScreen(
             player = player,
-            stats = stats,
-            points = points,
+            profile = profile,
+            loadError = loadError,
             onBack = onClose,
-            onAddPoint = { sheet = PlayerSheet.AddPoint },
-            onOpenPoint = { sheet = PlayerSheet.Observation(it.id) },
-            onLogObservation = { points.firstOrNull()?.let { sheet = PlayerSheet.Observation(it.id) } },
+            onRecordDrill = {
+                sheetError = null
+                sheetOpen = true
+            },
         )
 
-        when (val current = sheet) {
-            PlayerSheet.AddPoint -> AddPointSheet(
+        if (sheetOpen) {
+            RecordDrillSheet(
                 player = player,
-                onSave = { title, category, score ->
-                    repository.addDevelopmentPoint(player.id, title, category, score)
-                    version++
-                    sheet = null
-                },
-                onDismiss = { sheet = null },
-            )
-
-            is PlayerSheet.Observation -> points.firstOrNull { it.id == current.pointId }?.let { point ->
-                LogObservationSheet(
-                    player = player,
-                    point = point,
-                    hasNextPlayer = nextPlayer != null,
-                    onSave = { rating, note ->
-                        repository.logObservation(point.id, rating, note)
-                        version++
-                        val next = nextPlayer
-                        if (next == null) {
-                            sheet = null
-                        } else {
-                            playerId = next.id
-                            sheet = PlayerSheet.Observation(repository.developmentPoints(next.id).first().id)
+                error = sheetError,
+                onSave = { stat: StatType, attempts, successes ->
+                    scope.launch {
+                        try {
+                            repository.recordDrill(player.id, stat, attempts, successes)
+                            version++
+                            sheetOpen = false
+                        } catch (e: CancellationException) {
+                            throw e
+                        } catch (e: Exception) {
+                            sheetError = e.message ?: "Opslaan is niet gelukt"
                         }
-                    },
-                    onDismiss = { sheet = null },
-                )
-            }
-
-            null -> Unit
+                    }
+                },
+                onDismiss = { sheetOpen = false },
+            )
         }
     }
 }

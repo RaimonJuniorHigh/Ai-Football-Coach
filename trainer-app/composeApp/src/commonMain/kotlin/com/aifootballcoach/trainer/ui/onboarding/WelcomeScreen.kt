@@ -33,7 +33,7 @@ private val steps = listOf("Geef je team een naam", "Voeg je spelers toe", "Nodi
 
 /** Design screen 11 — "Onboarding · welcome". */
 @Composable
-fun WelcomeScreen(trainerName: String, onStart: () -> Unit) {
+fun WelcomeScreen(onStart: () -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
@@ -43,7 +43,7 @@ fun WelcomeScreen(trainerName: String, onStart: () -> Unit) {
     ) {
         Spacer(Modifier.height(48.dp))
         Text(
-            "Welkom, $trainerName",
+            "Welkom",
             style = MaterialTheme.typography.labelSmall,
             color = CoachColors.OnPitchMuted,
         )

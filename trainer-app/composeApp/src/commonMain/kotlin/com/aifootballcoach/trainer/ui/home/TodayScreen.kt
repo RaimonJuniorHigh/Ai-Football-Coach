@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.aifootballcoach.trainer.data.Attention
 import com.aifootballcoach.trainer.data.SessionDraft
-import com.aifootballcoach.trainer.data.Trainer
 import com.aifootballcoach.trainer.theme.CoachColors
 import com.aifootballcoach.trainer.ui.components.CoachIcons
 import com.aifootballcoach.trainer.ui.components.InitialsAvatar
@@ -38,12 +37,11 @@ import com.aifootballcoach.trainer.ui.components.PillButton
 import com.aifootballcoach.trainer.ui.components.SectionLabel
 import com.aifootballcoach.trainer.ui.components.StatCard
 
-data class SquadStats(val available: Int, val squad: Int, val stalled: Int)
+data class SquadStats(val available: Int, val squad: Int, val needsAttention: Int)
 
 /** Design screen 02 — "Today", the trainer dashboard. */
 @Composable
 fun TodayScreen(
-    trainer: Trainer,
     dateLabel: String,
     greeting: String,
     draft: SessionDraft?,
@@ -65,12 +63,11 @@ fun TodayScreen(
             Column(Modifier.weight(1f)) {
                 Text(dateLabel, style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
                 Text(
-                    "$greeting, ${trainer.firstName}",
+                    greeting,
                     style = MaterialTheme.typography.headlineLarge.copy(fontSize = 22.sp, lineHeight = 26.sp),
                     color = CoachColors.Ink,
                 )
             }
-            InitialsAvatar(trainer.initials, size = 34.dp)
         }
 
         if (draft != null) {
@@ -82,7 +79,7 @@ fun TodayScreen(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             StatCard(stats.available.toString(), "beschikbaar", Modifier.weight(1f))
             StatCard(stats.squad.toString(), "selectie", Modifier.weight(1f))
-            StatCard(stats.stalled.toString(), "vastgelopen", Modifier.weight(1f), valueColor = CoachColors.Alert)
+            StatCard(stats.needsAttention.toString(), "aandacht", Modifier.weight(1f), valueColor = CoachColors.Alert)
         }
 
         if (needsYou.isNotEmpty()) {
@@ -117,7 +114,7 @@ private fun DraftCard(draft: SessionDraft, onReview: () -> Unit) {
             Icon(CoachIcons.Plus, contentDescription = null, tint = CoachColors.Ink, modifier = Modifier.size(10.dp))
             Spacer(Modifier.width(6.dp))
             Text(
-                "AI-CONCEPT KLAAR",
+                "CONCEPT KLAAR",
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 10.sp,
@@ -128,7 +125,7 @@ private fun DraftCard(draft: SessionDraft, onReview: () -> Unit) {
         }
         Spacer(Modifier.height(12.dp))
         Text(
-            "${draft.day}\n${draft.time}",
+            "${draft.day}\n${draft.dateLabel}",
             style = MaterialTheme.typography.headlineLarge.copy(fontSize = 26.sp, lineHeight = 28.sp),
             color = Color.White,
         )

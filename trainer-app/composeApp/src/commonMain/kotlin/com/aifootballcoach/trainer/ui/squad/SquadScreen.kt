@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -35,7 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aifootballcoach.trainer.data.Availability
 import com.aifootballcoach.trainer.data.Player
-import com.aifootballcoach.trainer.data.PlayerFlag
+import com.aifootballcoach.trainer.data.RatingColors
+import com.aifootballcoach.trainer.data.RatingTier
 import com.aifootballcoach.trainer.data.Position
 import com.aifootballcoach.trainer.theme.CoachColors
 import com.aifootballcoach.trainer.ui.components.InitialsAvatar
@@ -52,6 +54,7 @@ private val bottomShape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16
 fun SquadScreen(
     teamName: String,
     players: List<Player>,
+    overall: (Player) -> Int?,
     onOpenPlayer: (Player) -> Unit,
     contentPadding: PaddingValues,
 ) {
@@ -88,15 +91,18 @@ fun SquadScreen(
             }
             Column(Modifier.clip(shape).background(CoachColors.Card)) {
                 if (index > 0) HorizontalDivider(color = CoachColors.Paper)
-                SquadRow(player) { onOpenPlayer(player) }
+                SquadRow(player, overall(player)) { onOpenPlayer(player) }
             }
         }
         item { Spacer(Modifier.height(16.dp)) }
     }
 }
 
+private fun subtitle(player: Player) =
+    if (player.availability == Availability.Out) "${player.position.label} · afwezig" else player.position.label
+
 @Composable
-private fun SquadRow(player: Player, onClick: () -> Unit) {
+private fun SquadRow(player: Player, overall: Int?, onClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -108,30 +114,28 @@ private fun SquadRow(player: Player, onClick: () -> Unit) {
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
             Text(player.name, style = MaterialTheme.typography.titleMedium.copy(fontSize = 15.sp), color = CoachColors.Ink)
-            Text(player.role, style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
+            Text(subtitle(player), style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
         }
-        StatusTag(player)
+        OverallBadge(overall)
     }
 }
 
+/** The player's overall (1–99) on a tile in the colour of its level; a dash while there is no result yet. */
 @Composable
-private fun StatusTag(player: Player) {
-    val (label, background, content) = when {
-        player.flag == PlayerFlag.Stalled -> Triple("Vastgelopen", CoachColors.AlertSoft, CoachColors.Alert)
-        player.flag == PlayerFlag.Review -> Triple("Bekijken", CoachColors.PitchSoft, CoachColors.Pitch)
-        player.availability == Availability.Out -> Triple("Afwezig", CoachColors.Chip, CoachColors.Muted)
-        else -> Triple("Aanwezig", CoachColors.Chip, CoachColors.Muted)
-    }
+internal fun OverallBadge(overall: Int?) {
+    val color = overall?.let { Color(RatingColors.tierForOverall(it).argb) } ?: CoachColors.Chip
     Box(
-        Modifier
-            .clip(RoundedCornerShape(percent = 50))
-            .background(background)
-            .padding(horizontal = 9.dp, vertical = 3.dp),
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(width = 44.dp, height = 32.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(color),
     ) {
         Text(
-            label,
-            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold, fontSize = 11.sp),
-            color = content,
+            overall?.toString() ?: "–",
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+            // Yellow is light, so it gets dark text; the other colours are dark enough for white.
+            color = if (overall == null || RatingColors.tierForOverall(overall) == RatingTier.Average) CoachColors.Ink else Color.White,
         )
     }
 }

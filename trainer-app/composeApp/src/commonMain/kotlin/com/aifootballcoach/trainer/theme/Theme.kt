@@ -10,7 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 
-/** Colour tokens taken from the "Trainer App v2" Claude design. */
+/** Colour tokens taken from the "Trainer App v2" design. */
 object CoachColors {
     val Pitch = Color(0xFF2D4C2E)        // brand green: welcome background, selected chips
     val Lime = Color(0xFFDFEB7C)         // accent: primary action on green

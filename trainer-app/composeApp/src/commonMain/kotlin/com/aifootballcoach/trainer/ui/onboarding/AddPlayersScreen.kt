@@ -154,7 +154,7 @@ private fun PlayerRow(player: Player) {
         Spacer(Modifier.width(12.dp))
         Column {
             Text(player.name, style = MaterialTheme.typography.titleMedium, color = CoachColors.Ink)
-            Text(player.role, style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
+            Text(player.position.label, style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
         }
     }
 }

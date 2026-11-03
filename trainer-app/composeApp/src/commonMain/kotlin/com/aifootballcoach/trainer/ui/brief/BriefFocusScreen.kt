@@ -67,14 +67,14 @@ fun BriefFocusScreen(
             Icon(CoachIcons.Sparkle, contentDescription = null, tint = CoachColors.Ink, modifier = Modifier.size(11.dp))
             Spacer(Modifier.width(6.dp))
             Text(
-                "VOORGESTELD DOOR DE ASSISTENT",
+                "OP BASIS VAN DE STATS",
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 10.sp),
                 color = CoachColors.Ink,
             )
         }
         Spacer(Modifier.height(6.dp))
         Text(
-            "Op basis van de open ontwikkelpunten. Kies er één of meer.",
+            "Op basis van de stats van je selectie. Kies er één of meer.",
             style = MaterialTheme.typography.labelSmall,
             color = CoachColors.Muted,
         )
