@@ -3,9 +3,9 @@ package com.aifootballcoach.trainer.data
 import kotlin.random.Random
 
 /**
- * The real [TeamRepository]: team, players, stats, drills and matches all come from the Supabase database.
- * A refresh loads everything for the screens into memory; the screens then read it without waiting.
- * The numbers (stat 1–20, overall 1–99) are calculated by the database, not here.
+ * De echte [TeamRepository]: team, spelers, stats, oefeningen en wedstrijden komen uit de Supabase-database.
+ * Bij een refresh haal ik alles voor de schermen op en bewaar ik het in het geheugen, zodat de schermen
+ * niet hoeven te wachten. De cijfers (stat 1–20, totaal 1–99) rekent de database uit en niet ik.
  */
 class SupabaseTeamRepository(private val remote: SupabaseRemote) : TeamRepository {
 
@@ -42,7 +42,7 @@ class SupabaseTeamRepository(private val remote: SupabaseRemote) : TeamRepositor
     override fun loadTeam(): Team = team
 
     override suspend fun saveTeam(team: Team) {
-        // Keep the invite code once there is one, so the link you shared keeps working.
+        // Is er al een uitnodigingscode, dan houd ik die. Zo blijft de link die je al gedeeld hebt werken.
         if (inviteCode.isEmpty()) inviteCode = newInviteCode()
         remote.saveTeam(team, inviteCode, players)
         refresh()
@@ -56,7 +56,7 @@ class SupabaseTeamRepository(private val remote: SupabaseRemote) : TeamRepositor
         val id = teamId ?: error("Save the team before adding players")
         remote.insertPlayer(id, name.trim(), position)
         refresh()
-        return players.last() // ordered by id, so the newest player is last
+        return players.last() // gesorteerd op id, dus de nieuwste speler staat laatst
     }
 
     override suspend fun removePlayer(id: String) {
@@ -82,7 +82,7 @@ class SupabaseTeamRepository(private val remote: SupabaseRemote) : TeamRepositor
         require(attempts > 0) { "Het aantal pogingen moet groter zijn dan 0" }
         require(successes in 0..attempts) { "Het aantal gelukt moet tussen 0 en het aantal pogingen liggen" }
         remote.insertDrill(playerId.toLong(), stat, stat.label, attempts, successes)
-        refresh() // the database has recalculated the stats and overall
+        refresh() // de database heeft de stats en het totaalcijfer opnieuw uitgerekend
     }
 
     override fun nextSession(): PlannedSession = SquadInsights.nextSession(now().date, team)

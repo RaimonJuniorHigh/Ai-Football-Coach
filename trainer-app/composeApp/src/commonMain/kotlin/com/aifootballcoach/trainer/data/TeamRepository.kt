@@ -1,12 +1,12 @@
 package com.aifootballcoach.trainer.data
 
 /**
- * Everything the trainer app knows about the team, its players and their stats.
- * [SupabaseTeamRepository] is the real implementation; it reads from the shared Supabase database.
- * Reads are instant (served from memory); call [refresh] to load the latest from the database.
+ * Alles wat de trainer-app weet over het team, de spelers en hun stats.
+ * [SupabaseTeamRepository] is de echte uitvoering en leest uit de gedeelde Supabase-database.
+ * Lezen gaat direct (uit het geheugen). Met [refresh] haal ik de nieuwste gegevens uit de database.
  */
 interface TeamRepository {
-    /** Loads team, players and stats from the database. */
+    /** Haalt team, spelers en stats uit de database. */
     suspend fun refresh()
 
     fun loadTeam(): Team
@@ -17,21 +17,21 @@ interface TeamRepository {
     suspend fun addPlayer(name: String, position: Position): Player
     suspend fun removePlayer(id: String)
 
-    /** The player's overall (1–99), or null while there are no training results yet. */
+    /** Het totaalcijfer (1–99) van de speler, of null zolang er nog geen oefeningen zijn. */
     fun overall(playerId: String): Int?
 
-    /** Players with a very low stat, for the "needs attention" list on the Today screen. */
+    /** Spelers met een heel lage stat, voor het lijstje "Vraagt aandacht" op het Vandaag-scherm. */
     fun needsYou(): List<Attention>
 
     suspend fun playerProfile(playerId: String): PlayerProfile
 
-    /** Saves a training result ([successes] of [attempts]); the database recalculates the stats. */
+    /** Slaat een oefening op ([successes] van [attempts]). De database rekent de stats opnieuw uit. */
     suspend fun recordDrill(playerId: String, stat: StatType, attempts: Int, successes: Int)
 
     fun nextSession(): PlannedSession
     fun focusSuggestions(): List<FocusSuggestion>
     fun nextSessionDraft(): SessionDraft?
 
-    /** Keeps the trainer's brief as the draft for the next session. There is no assistant (AI) behind this yet. */
+    /** Bewaart wat de trainer heeft ingevuld als concept voor de volgende training. Er zit nog geen assistent (AI) achter. */
     fun draftSession(brief: SessionBrief): SessionDraft
 }

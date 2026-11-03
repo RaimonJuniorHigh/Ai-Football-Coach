@@ -18,7 +18,7 @@ import com.aifootballcoach.trainer.data.Team
 import com.aifootballcoach.trainer.data.TeamRepository
 import com.aifootballcoach.trainer.data.Weekday
 
-/** Test double with a small fixed squad, so the screens can be rendered without a database. */
+/** Nepversie voor de tests, met een kleine vaste selectie. Zo kan ik de schermen tekenen zonder database. */
 class FakeTeamRepository : TeamRepository {
     private val team = Team("JO17-1", setOf(Weekday.Tue, Weekday.Thu), 90)
 

@@ -5,17 +5,17 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
 
 /**
- * Things the app works out from the squad's stats, without a call to the database:
- * who needs attention, what to train, and when the next training is.
+ * Dingen die ik in de app uit de stats van de selectie bepaal, zonder nieuwe vraag aan de database:
+ * wie aandacht nodig heeft, wat we kunnen trainen en wanneer de volgende training is.
  */
 object SquadInsights {
-    /** A stat of 4 or lower is red (see [RatingColors]). */
+    /** Een stat van 4 of lager is rood (zie [RatingColors]). */
     private const val WeakStat = 4
 
-    /** A stat of 8 or lower is red or orange. */
+    /** Een stat van 8 of lager is rood of oranje. */
     private const val LowStat = 8
 
-    /** Players whose weakest stat is red, the lowest first (at most five). */
+    /** Spelers met een rode stat, de laagste eerst (hoogstens vijf). */
     fun needsYou(players: List<Player>, stats: Map<String, List<PlayerStat>>): List<Attention> =
         players
             .mapNotNull { player ->
@@ -26,7 +26,7 @@ object SquadInsights {
             .take(5)
             .map { (player, weakest) -> Attention(player, "${weakest.stat.label}: ${weakest.rating} van 20 — zwakste punt") }
 
-    /** The three stats where most players score low, as themes for the next session. */
+    /** De drie stats waar de meeste spelers laag op scoren, als thema's voor de volgende training. */
     fun focusSuggestions(stats: Map<String, List<PlayerStat>>): List<FocusSuggestion> =
         StatType.entries
             .map { type -> type to stats.values.count { list -> list.any { it.stat == type && it.rating <= LowStat } } }
@@ -41,10 +41,10 @@ object SquadInsights {
                 )
             }
 
-    /** The first training day from [today] on (today included), or null when the team has no training days. */
+    /** De eerste trainingsdag vanaf [today] (vandaag telt mee), of null als het team geen trainingsdagen heeft. */
     fun nextTrainingDay(today: LocalDate, days: Set<Weekday>): LocalDate? =
         (0..6).map { today.plus(it, DateTimeUnit.DAY) }.firstOrNull { date ->
-            // Weekday only knows Monday to Friday, so Saturday and Sunday are never training days.
+            // Weekday kent alleen maandag tot en met vrijdag, dus zaterdag en zondag zijn nooit een trainingsdag.
             Weekday.entries.getOrNull(date.dayOfWeek.ordinal) in days
         }
 

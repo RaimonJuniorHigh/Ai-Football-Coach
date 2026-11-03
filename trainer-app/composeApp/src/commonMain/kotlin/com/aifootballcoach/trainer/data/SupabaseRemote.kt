@@ -19,10 +19,10 @@ import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
-/** A team as stored in the database, with the id and invite code the app model doesn't carry. */
+/** Een team zoals het in de database staat, met het id en de uitnodigingscode die het model van de app niet heeft. */
 class SavedTeam(val id: Long, val team: Team, val inviteCode: String)
 
-// Rows exactly as the tables in supabase/migrations name them (training_days, session_minutes, ...).
+// Rijen precies zoals de tabellen in supabase/migrations ze noemen (training_days, session_minutes, ...).
 @Serializable
 private data class TeamDto(
     val id: Long,
@@ -31,7 +31,7 @@ private data class TeamDto(
     @SerialName("session_minutes") val sessionMinutes: Int,
     @SerialName("invite_code") val inviteCode: String,
 ) {
-    // Days the app doesn't know are skipped, so one odd value can't crash the app.
+    // Een dag die de app niet kent sla ik over, zodat één vreemde waarde de app niet laat crashen.
     fun toSaved() = SavedTeam(
         id = id,
         team = Team(
@@ -49,7 +49,7 @@ private data class PlayerDto(val id: Long, val name: String, val position: Strin
         id = id.toString(),
         name = name,
         position = Position.entries.first { it.name.uppercase() == position },
-        // The database also knows INJURED; the app only has In / Out, so anything but PRESENT counts as Out.
+        // De database kent ook INJURED, maar de app heeft alleen In en Uit. Alles behalve PRESENT telt dus als Uit.
         availability = if (attendance == "PRESENT") Availability.In else Availability.Out,
     )
 }
@@ -57,7 +57,7 @@ private data class PlayerDto(val id: Long, val name: String, val position: Strin
 @Serializable
 private data class NewPlayerDto(@SerialName("team_id") val teamId: Long, val name: String, val position: String)
 
-// Rows of the views player_cards and player_stats, and of the tables drill_results and match_players.
+// Rijen van de views player_cards en player_stats en van de tabellen drill_results en match_players.
 @Serializable
 private data class CardDto(@SerialName("player_id") val playerId: Long, val overall: Int? = null)
 
@@ -82,7 +82,7 @@ private data class NewDrillDto(
     val successes: Int,
 )
 
-// A match line of a player, with the match itself ("matches") as PostgREST sends it along.
+// Een wedstrijdregel van een speler, met de wedstrijd zelf ("matches") erbij zoals PostgREST die meestuurt.
 @Serializable
 private data class MatchPlayerDto(val minutes: Int, val goals: Int, val assists: Int, val matches: MatchDto)
 
@@ -95,22 +95,22 @@ private data class MatchDto(
     @SerialName("goals_against") val goalsAgainst: Int,
 )
 
-// A stat the app doesn't know is skipped, so a new stat in the database can't crash the app.
+// Een stat die de app niet kent sla ik over, zodat een nieuwe stat in de database de app niet laat crashen.
 private fun statTypeOrNull(code: String): StatType? = StatType.entries.firstOrNull { it.name == code }
 
 /**
- * The real connection to the Supabase database (online or the local one from `supabase start`).
- * There is no login screen yet, so the first request signs in anonymously; Supabase remembers that
- * session and row level security then lets this user see only their own team.
+ * De echte verbinding met de Supabase-database (online, of de lokale van `supabase start`).
+ * Er is nog geen inlogscherm. Daarom log ik bij de eerste vraag anoniem in. Supabase onthoudt die sessie,
+ * en door de beveiliging (row level security) ziet deze gebruiker alleen zijn eigen team.
  */
 class SupabaseRemote(private val client: SupabaseClient) {
 
-    // Several requests can start at once; the lock makes sure only one of them signs in.
+    // Er kunnen meerdere vragen tegelijk starten. Het slot zorgt dat er maar één inlogt.
     private val signInLock = Mutex()
 
     private suspend fun ensureSignedIn() = signInLock.withLock {
-        // The saved session is loaded in the background at start-up; wait for it, or every app start would
-        // sign in as a new anonymous user and lose the team.
+        // De opgeslagen sessie wordt bij het starten op de achtergrond geladen. Ik wacht daarop, anders log ik
+        // bij elke start in als een nieuwe anonieme gebruiker en is het team weg.
         client.auth.awaitInitialization()
         if (client.auth.currentSessionOrNull() == null) client.auth.signInAnonymously()
     }
@@ -131,7 +131,7 @@ class SupabaseRemote(private val client: SupabaseClient) {
         }.decodeList<PlayerDto>().map { it.toPlayer() }
     }
 
-    /** Replaces this trainer's team and players in one go (the `save_team` database function). */
+    /** Slaat het team op via de database-functie `save_team`. Bestaat het team al, dan blijven de spelers staan. */
     suspend fun saveTeam(team: Team, inviteCode: String, players: List<Player>) {
         ensureSignedIn()
         val params = buildJsonObject {
@@ -162,14 +162,14 @@ class SupabaseRemote(private val client: SupabaseClient) {
         client.from("players").delete { filter { eq("id", playerId) } }
     }
 
-    /** Overall (1–99) per player id; only players with training results are in there. */
+    /** Het totaalcijfer (1–99) per speler. Alleen spelers met oefeningen staan erin. */
     suspend fun fetchOveralls(): Map<Long, Int> {
         ensureSignedIn()
         return client.from("player_cards").select().decodeList<CardDto>()
             .mapNotNull { card -> card.overall?.let { card.playerId to it } }.toMap()
     }
 
-    /** Stats of every player of this trainer's team, per player id. */
+    /** De stats van alle spelers van het team, per speler. */
     suspend fun fetchSquadStats(): Map<Long, List<PlayerStat>> {
         ensureSignedIn()
         return client.from("player_stats").select().decodeList<StatDto>()
@@ -214,7 +214,7 @@ class SupabaseRemote(private val client: SupabaseClient) {
     }
 
     companion object {
-        /** [url] and [key] are the project URL and the public (publishable) key; never the secret key. */
+        /** [url] is het adres van het project en [key] de publieke (publishable) sleutel. Nooit de geheime sleutel gebruiken. */
         fun create(url: String, key: String) = SupabaseRemote(
             createSupabaseClient(url, key) {
                 install(Auth)

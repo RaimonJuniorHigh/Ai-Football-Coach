@@ -27,9 +27,9 @@ import com.aifootballcoach.trainer.ui.components.PillButton
 import com.aifootballcoach.trainer.ui.components.ToggleChip
 
 /**
- * Bottom sheet to note a training result: pick the stat that was trained, then how many attempts
- * there were and how many worked (for example 100 shots, 70 goals). The database turns that
- * into the player's stat from 1 to 20.
+ * Onderste venster om een oefening te noteren. Je kiest welke stat je getraind hebt en vult in hoeveel
+ * pogingen het waren en hoeveel er lukten (bijvoorbeeld 100 schoten, 70 goals). De database maakt
+ * daar de stat van 1 tot 20 van.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

@@ -58,7 +58,7 @@ fun App(
     val clipboard = LocalClipboardManager.current
     val scope = rememberCoroutineScope()
 
-    // The repository loads from the database first; until then (or when that fails) show a status screen.
+    // Eerst laad ik alles uit de database. Zolang dat duurt (of als het mislukt) toon ik een statusscherm.
     var loaded by remember { mutableStateOf(false) }
     var problem by remember { mutableStateOf<String?>(null) }
     var attempt by remember { mutableStateOf(0) }
@@ -76,7 +76,7 @@ fun App(
         }
     }
 
-    // Runs a database call and shows the problem screen instead of crashing when it fails.
+    // Voert een vraag aan de database uit en toont het probleemscherm in plaats van te crashen als het mislukt.
     fun launchSafely(block: suspend () -> Unit) {
         scope.launch {
             try {
@@ -144,7 +144,7 @@ fun App(
     }
 }
 
-/** Shown while the database is being read, or with a retry button when that failed. */
+/** Wordt getoond terwijl ik de database lees, of met een knop om opnieuw te proberen als dat mislukte. */
 @Composable
 private fun StatusScreen(problem: String?, onRetry: () -> Unit) {
     Box(
@@ -163,7 +163,7 @@ private fun StatusScreen(problem: String?, onRetry: () -> Unit) {
     }
 }
 
-/** Shown instead of the app when it can't start, for example when the database settings are missing. */
+/** Wordt getoond in plaats van de app als hij niet kan starten, bijvoorbeeld als de database-instellingen ontbreken. */
 @Composable
 fun SetupProblemScreen(message: String) {
     CoachTheme {

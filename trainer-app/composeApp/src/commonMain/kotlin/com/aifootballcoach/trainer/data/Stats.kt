@@ -2,12 +2,12 @@ package com.aifootballcoach.trainer.data
 
 import kotlin.math.ceil
 
-// The football-manager part: every stat is a number from 1 to 20 (20 is best), every player has an
-// overall from 1 to 99 (like a FIFA card) that depends on his position. The database calculates these
-// numbers (the views player_stats and player_cards in supabase/migrations); the app only reads them,
-// so the website shows exactly the same numbers.
+// Dit is het voetbalmanager-gedeelte. Elke stat is een cijfer van 1 tot 20 (20 is het best) en elke speler
+// heeft een totaalcijfer van 1 tot 99, zoals een FIFA-kaartje. Dat totaalcijfer hangt af van zijn positie.
+// Ik reken die cijfers niet in de app uit maar in de database (de views player_stats en player_cards in
+// supabase/migrations). De app haalt ze alleen op, dus de website laat precies dezelfde cijfers zien.
 
-/** The eight stats. The same codes are in the database (table stat_types). */
+/** De acht stats. Dezelfde codes staan in de database (tabel stat_types). */
 enum class StatType(val label: String, val drill: String) {
     FINISHING("Afwerken", "Schoten op doel: aantal schoten en aantal goals"),
     PASSING("Passen", "Passes naar een medespeler: aantal passes en aantal aangekomen"),
@@ -19,10 +19,10 @@ enum class StatType(val label: String, val drill: String) {
     GOALKEEPING("Keepen", "Schoten op de keeper: aantal schoten en aantal gestopt"),
 }
 
-/** One stat of a player: [rating] is 1 to 20. */
+/** Eén stat van een speler: [rating] is een cijfer van 1 tot 20. */
 data class PlayerStat(val stat: StatType, val rating: Int)
 
-/** One training result: [successes] of the [attempts] worked. [recordedOn] is a date like "2026-11-03". */
+/** Eén oefening: [successes] van de [attempts] pogingen lukten. [recordedOn] is een datum zoals "2026-11-03". */
 data class DrillResult(
     val stat: StatType,
     val drill: String,
@@ -31,7 +31,7 @@ data class DrillResult(
     val recordedOn: String,
 )
 
-/** What a player did in one match, with the score of that match. */
+/** Wat een speler in één wedstrijd deed, met de uitslag van die wedstrijd. */
 data class MatchAppearance(
     val playedOn: String,
     val opponent: String,
@@ -43,7 +43,7 @@ data class MatchAppearance(
     val assists: Int,
 )
 
-/** Everything on the player page. [overall] is 1 to 99, or null while there are no training results. */
+/** Alles op de spelerspagina. [overall] is 1 tot 99, of null zolang er nog geen oefeningen zijn. */
 data class PlayerProfile(
     val overall: Int?,
     val stats: List<PlayerStat>,
@@ -51,7 +51,7 @@ data class PlayerProfile(
     val matches: List<MatchAppearance>,
 )
 
-/** Five levels from low to high; the colour is an ARGB number so this file needs nothing from Compose. */
+/** Vijf niveaus van laag naar hoog. De kleur is een ARGB-getal, zodat dit bestand niets van Compose hoeft te weten. */
 enum class RatingTier(val argb: Long, val label: String) {
     VeryLow(0xFFE53935, "Zwak"),
     Low(0xFFFB8C00, "Onder gemiddeld"),
@@ -61,7 +61,7 @@ enum class RatingTier(val argb: Long, val label: String) {
 }
 
 object RatingColors {
-    /** Stat 1 to 20: 1-4 red, 5-8 orange, 9-12 yellow, 13-16 light green, 17-20 dark green. */
+    /** Stat van 1 tot 20: 1-4 rood, 5-8 oranje, 9-12 geel, 13-16 lichtgroen, 17-20 donkergroen. */
     fun tierForStat(rating: Int): RatingTier = when {
         rating <= 4 -> RatingTier.VeryLow
         rating <= 8 -> RatingTier.Low
@@ -70,6 +70,6 @@ object RatingColors {
         else -> RatingTier.Excellent
     }
 
-    /** Overall 1 to 99 is converted to the 1 to 20 scale so it uses the same colours. */
+    /** Het totaalcijfer van 1 tot 99 reken ik om naar de schaal van 1 tot 20, zodat het dezelfde kleuren krijgt. */
     fun tierForOverall(overall: Int): RatingTier = tierForStat(ceil(overall * 20.0 / 99).toInt())
 }

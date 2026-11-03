@@ -15,25 +15,18 @@ same UI code runs on Android and iOS. All data comes from the Supabase database 
 
 ## Database
 
-The database (tables, security rules, the stats calculation) lives in `../supabase` as SQL migrations.
-Start it locally with Docker and the Supabase CLI:
-
-```bash
-cd ..            # repository root
-supabase start   # prints the API URL and the publishable key
-supabase db reset
-```
-
-Then put the address and the **publishable** key in `trainer-app/local.properties` (this file is not in git; never use the secret key):
+De app leest alles uit de Supabase-database in `../supabase`. Uitleg staat in `../docs/database.md`.
+Kort: start de database met `supabase start` in de hoofdmap en zet in `trainer-app/local.properties` (staat niet in git)
+het adres en de **publieke** sleutel, nooit de geheime:
 
 ```
 supabase.url=http://10.0.2.2:54321
 supabase.key=sb_publishable_...
 ```
 
-`10.0.2.2` is how the Android emulator reaches your computer. For the desktop preview set the environment
-variables `SUPABASE_URL` and `SUPABASE_KEY` instead. Without these settings the app shows a message instead of starting.
-There is no login screen yet: the app signs in anonymously and every installation gets its own team.
+`10.0.2.2` is hoe de Android-emulator jouw computer bereikt. Voor de desktop-preview zet je de omgevingsvariabelen
+`SUPABASE_URL` en `SUPABASE_KEY`. Zonder die instellingen toont de app een melding. Er is nog geen inlogscherm:
+de app logt anoniem in en elke installatie krijgt zijn eigen team.
 
 ## Run on Android
 

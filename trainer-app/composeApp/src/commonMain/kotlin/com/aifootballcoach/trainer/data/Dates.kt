@@ -14,7 +14,7 @@ private val monthNames = listOf(
 )
 private val monthNamesShort = listOf("jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec")
 
-/** The current local date and time. */
+/** De huidige datum en tijd op dit toestel. */
 fun now(): LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
 fun LocalDate.dayName(): String = dayNames[dayOfWeek.ordinal]
@@ -25,7 +25,7 @@ fun LocalDate.shortLabel(): String = "${dayNamesShort[dayOfWeek.ordinal]} $day $
 /** "Dinsdag 22 september" */
 fun LocalDate.longLabel(): String = "${dayName()} $day ${monthNames[month.ordinal]}"
 
-/** "3 nov" from a date like "2026-11-03"; an unreadable date is shown as it came. */
+/** "3 nov" uit een datum zoals "2026-11-03". Kan ik de datum niet lezen, dan laat ik hem zoals hij is. */
 fun formatShortDate(iso: String): String =
     runCatching { LocalDate.parse(iso.take(10)).let { "${it.day} ${monthNamesShort[it.month.ordinal]}" } }.getOrDefault(iso)
 
