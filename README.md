@@ -35,7 +35,3 @@ Dit is een groepsproject voor Fontys. We zijn met z'n tweeën: Berkan en ik (You
 - De wedstrijden in de database zijn nog vaste testdata.
 - De AI-assistent bestaat nog niet. Er is nog geen API en geen sleutel. Het "concept" in de app is wat de trainer zelf invult.
 
-## AI-gebruik
-
-Ik gebruik AI-hulp bij het schrijven van code en teksten voor dit project. Alles wat ik toevoeg test ik zelf
-voordat het in `main` komt (zie `docs/testverslag.md`).
