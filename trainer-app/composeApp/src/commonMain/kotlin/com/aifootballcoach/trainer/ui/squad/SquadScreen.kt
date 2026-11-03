@@ -64,13 +64,13 @@ fun SquadScreen(
     ) {
         item {
             Spacer(Modifier.height(12.dp))
-            Text("${players.size} players", style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
+            Text("${players.size} spelers", style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
             Text(teamName, style = MaterialTheme.typography.headlineLarge, color = CoachColors.Ink)
             Spacer(Modifier.height(12.dp))
             LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 items(filters) { position ->
                     ToggleChip(
-                        text = position?.label ?: "All",
+                        text = position?.label ?: "Alle",
                         selected = filter == position,
                         onClick = { filter = position },
                         selectedColor = CoachColors.Ink,
@@ -117,10 +117,10 @@ private fun SquadRow(player: Player, onClick: () -> Unit) {
 @Composable
 private fun StatusTag(player: Player) {
     val (label, background, content) = when {
-        player.flag == PlayerFlag.Stalled -> Triple("Stalled", CoachColors.AlertSoft, CoachColors.Alert)
-        player.flag == PlayerFlag.Review -> Triple("Review", CoachColors.PitchSoft, CoachColors.Pitch)
-        player.availability == Availability.Out -> Triple("Out", CoachColors.Chip, CoachColors.Muted)
-        else -> Triple("In", CoachColors.Chip, CoachColors.Muted)
+        player.flag == PlayerFlag.Stalled -> Triple("Vastgelopen", CoachColors.AlertSoft, CoachColors.Alert)
+        player.flag == PlayerFlag.Review -> Triple("Bekijken", CoachColors.PitchSoft, CoachColors.Pitch)
+        player.availability == Availability.Out -> Triple("Afwezig", CoachColors.Chip, CoachColors.Muted)
+        else -> Triple("Aanwezig", CoachColors.Chip, CoachColors.Muted)
     }
     Box(
         Modifier

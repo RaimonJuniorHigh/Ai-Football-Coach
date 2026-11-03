@@ -25,10 +25,10 @@ import androidx.compose.ui.unit.dp
 import com.aifootballcoach.trainer.theme.CoachColors
 
 enum class Tab(val label: String, val icon: ImageVector) {
-    Today("Today", CoachIcons.Home),
-    Squad("Squad", CoachIcons.People),
-    Assistant("Assistant", CoachIcons.Sparkle),
-    Sessions("Sessions", CoachIcons.Calendar),
+    Today("Vandaag", CoachIcons.Home),
+    Squad("Selectie", CoachIcons.People),
+    Assistant("Assistent", CoachIcons.Sparkle),
+    Sessions("Trainingen", CoachIcons.Calendar),
 }
 
 /** Floating dark tab bar; the selected tab expands into a lime pill with its label. */

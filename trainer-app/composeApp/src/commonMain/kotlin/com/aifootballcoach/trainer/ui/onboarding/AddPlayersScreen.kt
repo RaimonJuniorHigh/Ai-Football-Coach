@@ -53,8 +53,8 @@ fun AddPlayersScreen(
     StepScaffold(
         step = 2,
         totalSteps = 3,
-        title = "Who's in the squad?",
-        buttonText = "Next",
+        title = "Wie zitten er in de selectie?",
+        buttonText = "Volgende",
         onButtonClick = onNext,
         buttonEnabled = players.isNotEmpty(),
     ) {
@@ -67,7 +67,7 @@ fun AddPlayersScreen(
         ) {
             Box {
                 if (name.isEmpty()) {
-                    Text("Player name", style = MaterialTheme.typography.bodyMedium, color = CoachColors.Muted)
+                    Text("Naam van de speler", style = MaterialTheme.typography.bodyMedium, color = CoachColors.Muted)
                 }
                 BasicTextField(
                     value = name,
@@ -98,7 +98,7 @@ fun AddPlayersScreen(
         }
 
         Spacer(Modifier.height(20.dp))
-        FieldLabel("Added · ${players.size}")
+        FieldLabel("Toegevoegd · ${players.size}")
         if (players.isNotEmpty()) {
             Column(
                 Modifier
@@ -115,7 +115,7 @@ fun AddPlayersScreen(
 
         Spacer(Modifier.height(16.dp))
         Text(
-            "Import from club list instead",
+            "Liever importeren uit de clublijst",
             style = MaterialTheme.typography.labelMedium,
             color = CoachColors.Pitch,
             modifier = Modifier

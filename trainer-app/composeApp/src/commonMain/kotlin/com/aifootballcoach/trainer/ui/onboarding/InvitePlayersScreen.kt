@@ -44,13 +44,13 @@ fun InvitePlayersScreen(
     StepScaffold(
         step = 3,
         totalSteps = 3,
-        title = "Send one link to the team.",
-        buttonText = "Done — go to Today",
+        title = "Stuur één link naar het team.",
+        buttonText = "Klaar — naar Vandaag",
         onButtonClick = onDone,
     ) {
         Text(
-            "Players open it in their browser — nothing to install. " +
-                "Each one only ever sees their own exercises.",
+            "Spelers openen de link in hun browser — niks installeren. " +
+                "Iedereen ziet alleen zijn eigen oefeningen.",
             style = MaterialTheme.typography.bodyMedium,
             color = CoachColors.Muted,
             modifier = Modifier.padding(top = 0.dp),
@@ -64,7 +64,7 @@ fun InvitePlayersScreen(
                 .background(CoachColors.Pitch)
                 .padding(16.dp),
         ) {
-            Text("Team link", style = MaterialTheme.typography.labelSmall, color = CoachColors.OnPitchMuted)
+            Text("Teamlink", style = MaterialTheme.typography.labelSmall, color = CoachColors.OnPitchMuted)
             Spacer(Modifier.height(2.dp))
             Text(
                 teamLink,
@@ -74,7 +74,7 @@ fun InvitePlayersScreen(
             Spacer(Modifier.height(14.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 PillButton(
-                    text = "Share",
+                    text = "Delen",
                     onClick = onShare,
                     containerColor = CoachColors.Lime,
                     contentColor = CoachColors.Ink,
@@ -82,7 +82,7 @@ fun InvitePlayersScreen(
                     modifier = Modifier.weight(1f),
                 )
                 PillButton(
-                    text = if (copied) "Copied" else "Copy",
+                    text = if (copied) "Gekopieerd" else "Kopieer",
                     onClick = {
                         onCopy()
                         copied = true
@@ -107,7 +107,7 @@ fun InvitePlayersScreen(
             Icon(CoachIcons.Shield, contentDescription = null, tint = CoachColors.Pitch, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(12.dp))
             Text(
-                "Players under 16 are asked for a parent's email. They join once the parent agrees.",
+                "Spelers onder de 16 vullen het e-mailadres van een ouder in. De ouder krijgt een mail om toestemming te geven. Daarna kan de speler meedoen.",
                 style = MaterialTheme.typography.labelSmall.copy(fontSize = 13.sp, lineHeight = 18.sp),
                 color = CoachColors.Ink,
             )

@@ -2,13 +2,13 @@ package com.aifootballcoach.trainer.data
 
 enum class Position(val label: String) {
     Keeper("Keeper"),
-    Defence("Defence"),
-    Midfield("Midfield"),
-    Attack("Attack"),
+    Defence("Verdediging"),
+    Midfield("Middenveld"),
+    Attack("Aanval"),
 }
 
 enum class Weekday(val short: String) {
-    Mon("Mon"), Tue("Tue"), Wed("Wed"), Thu("Thu"), Fri("Fri"),
+    Mon("Ma"), Tue("Di"), Wed("Wo"), Thu("Do"), Fri("Vr"),
 }
 
 /** Whether a player is available for the next session. */
@@ -21,7 +21,7 @@ data class Player(
     val id: String,
     val name: String,
     val position: Position,
-    /** Specific role shown under the name, e.g. "Right back". */
+    /** Specific role shown under the name, e.g. "Rechtsback". */
     val role: String = position.label,
     val availability: Availability = Availability.In,
     val flag: PlayerFlag? = null,

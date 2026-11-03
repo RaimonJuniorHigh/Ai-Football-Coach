@@ -79,14 +79,14 @@ fun TodayScreen(
 
         Spacer(Modifier.height(10.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            StatCard(stats.available, "available", Modifier.weight(1f))
-            StatCard(stats.squad, "squad", Modifier.weight(1f))
-            StatCard(stats.stalled, "stalled", Modifier.weight(1f), valueColor = CoachColors.Alert)
+            StatCard(stats.available, "beschikbaar", Modifier.weight(1f))
+            StatCard(stats.squad, "selectie", Modifier.weight(1f))
+            StatCard(stats.stalled, "vastgelopen", Modifier.weight(1f), valueColor = CoachColors.Alert)
         }
 
         if (needsYou.isNotEmpty()) {
             Spacer(Modifier.height(24.dp))
-            SectionLabel("Needs you")
+            SectionLabel("Vraagt aandacht")
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
@@ -116,7 +116,7 @@ private fun DraftCard(draft: SessionDraft, onReview: () -> Unit) {
             Icon(CoachIcons.Plus, contentDescription = null, tint = CoachColors.Ink, modifier = Modifier.size(10.dp))
             Spacer(Modifier.width(6.dp))
             Text(
-                "DRAFT READY",
+                "AI-CONCEPT KLAAR",
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 10.sp,
@@ -139,7 +139,7 @@ private fun DraftCard(draft: SessionDraft, onReview: () -> Unit) {
         )
         Spacer(Modifier.height(16.dp))
         PillButton(
-            text = "Review draft",
+            text = "Concept bekijken",
             onClick = onReview,
             containerColor = CoachColors.Card,
             contentColor = CoachColors.Ink,

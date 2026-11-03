@@ -49,8 +49,8 @@ fun MainShell(repository: TeamRepository, initialTab: Tab = Tab.Today) {
             Tab.Today -> TodayScreen(
                 trainer = repository.trainer(),
                 // TODO: real date and time-of-day greeting once kotlinx-datetime is added.
-                dateLabel = "Tuesday 22 September",
-                greeting = "Evening",
+                dateLabel = "Dinsdag 22 september",
+                greeting = "Goedenavond",
                 draft = repository.nextSessionDraft(),
                 stats = SquadStats(
                     available = players.count { it.availability == Availability.In },
@@ -74,7 +74,7 @@ fun MainShell(repository: TeamRepository, initialTab: Tab = Tab.Today) {
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize().padding(contentPadding),
             ) {
-                Text("${tab.label} comes in a later batch", style = MaterialTheme.typography.bodyLarge, color = CoachColors.Muted)
+                Text("${tab.label} komt later", style = MaterialTheme.typography.bodyLarge, color = CoachColors.Muted)
             }
         }
 

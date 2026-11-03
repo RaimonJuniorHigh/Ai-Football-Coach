@@ -42,8 +42,8 @@ fun TeamSetupScreen(
     StepScaffold(
         step = 1,
         totalSteps = 3,
-        title = "Which team do you coach?",
-        buttonText = "Next",
+        title = "Welk team train je?",
+        buttonText = "Volgende",
         onButtonClick = onNext,
         buttonEnabled = team.name.isNotBlank() && team.trainingDays.isNotEmpty(),
     ) {
@@ -54,7 +54,7 @@ fun TeamSetupScreen(
                 .background(CoachColors.Card)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
         ) {
-            Text("Team name", style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
+            Text("Teamnaam", style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
             Spacer(Modifier.height(2.dp))
             BasicTextField(
                 value = team.name,
@@ -75,7 +75,7 @@ fun TeamSetupScreen(
         }
 
         Spacer(Modifier.height(20.dp))
-        FieldLabel("Training days")
+        FieldLabel("Trainingsdagen")
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -94,7 +94,7 @@ fun TeamSetupScreen(
         }
 
         Spacer(Modifier.height(20.dp))
-        FieldLabel("Usual session length")
+        FieldLabel("Gebruikelijke trainingsduur")
         SegmentedControl(
             options = sessionLengths,
             selected = team.sessionMinutes,

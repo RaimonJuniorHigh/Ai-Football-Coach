@@ -77,7 +77,7 @@ fun StepScaffold(
         ) {
             Spacer(Modifier.height(28.dp))
             Text(
-                "Step $step of $totalSteps",
+                "Stap $step van $totalSteps",
                 style = MaterialTheme.typography.labelSmall,
                 color = CoachColors.Muted,
             )

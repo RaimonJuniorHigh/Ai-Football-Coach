@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.aifootballcoach.trainer.theme.CoachColors
 import com.aifootballcoach.trainer.ui.components.PillButton
 
-private val steps = listOf("Name your team", "Add your players", "Invite them with one link")
+private val steps = listOf("Geef je team een naam", "Voeg je spelers toe", "Nodig ze uit met één link")
 
 /** Design screen 11 — "Onboarding · welcome". */
 @Composable
@@ -43,19 +43,19 @@ fun WelcomeScreen(trainerName: String, onStart: () -> Unit) {
     ) {
         Spacer(Modifier.height(48.dp))
         Text(
-            "Welcome, $trainerName",
+            "Welkom, $trainerName",
             style = MaterialTheme.typography.labelSmall,
             color = CoachColors.OnPitchMuted,
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            "Set up your team in three steps.",
+            "Zet je team op in drie stappen.",
             style = MaterialTheme.typography.displayMedium,
             color = Color.White,
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            "About five minutes. You can change everything later.",
+            "Duurt zo'n vijf minuten. Je kunt alles later nog aanpassen.",
             style = MaterialTheme.typography.bodyMedium,
             color = CoachColors.OnPitchMuted,
         )
@@ -69,7 +69,7 @@ fun WelcomeScreen(trainerName: String, onStart: () -> Unit) {
         }
         Spacer(Modifier.height(20.dp))
         PillButton(
-            text = "Start",
+            text = "Beginnen",
             onClick = onStart,
             containerColor = CoachColors.Lime,
             contentColor = CoachColors.Ink,

@@ -25,22 +25,22 @@ class MockTeamRepository : TeamRepository {
 
     private val players = mutableListOf(
         Player("p1", "Daan Verhoeven", Position.Keeper),
-        Player("p2", "Sem Vossen", Position.Defence, "Right back", flag = PlayerFlag.Stalled),
+        Player("p2", "Sem Vossen", Position.Defence, "Rechtsback", flag = PlayerFlag.Stalled),
         Player("p3", "Jesse Daniëls", Position.Midfield, flag = PlayerFlag.Review),
-        Player("p4", "Thijs Peeters", Position.Defence, "Centre back", Availability.Out),
-        Player("p5", "Ruben Geurts", Position.Defence, "Centre back"),
+        Player("p4", "Thijs Peeters", Position.Defence, "Centrale verdediger", Availability.Out),
+        Player("p5", "Ruben Geurts", Position.Defence, "Centrale verdediger"),
         Player("p6", "Bram Maas", Position.Midfield),
-        Player("p7", "Mees Koolen", Position.Attack, "Left wing", flag = PlayerFlag.Stalled),
-        Player("p8", "Luuk Bekkers", Position.Attack, "Striker"),
-        Player("p9", "Noah Hendrikx", Position.Defence, "Left back", Availability.Out),
+        Player("p7", "Mees Koolen", Position.Attack, "Linksbuiten", flag = PlayerFlag.Stalled),
+        Player("p8", "Luuk Bekkers", Position.Attack, "Spits"),
+        Player("p9", "Noah Hendrikx", Position.Defence, "Linksback", Availability.Out),
         Player("p10", "Finn van Dijk", Position.Midfield, flag = PlayerFlag.Stalled),
-        Player("p11", "Lars Jansen", Position.Attack, "Right wing"),
+        Player("p11", "Lars Jansen", Position.Attack, "Rechtsbuiten"),
         Player("p12", "Milan Smeets", Position.Midfield, availability = Availability.Out),
-        Player("p13", "Stijn Willems", Position.Defence, "Centre back", flag = PlayerFlag.Stalled),
+        Player("p13", "Stijn Willems", Position.Defence, "Centrale verdediger", flag = PlayerFlag.Stalled),
         Player("p14", "Tim Raaijmakers", Position.Keeper),
         Player("p15", "Jens Coolen", Position.Midfield, flag = PlayerFlag.Stalled),
-        Player("p16", "Bas Vermeulen", Position.Attack, "Striker", Availability.Out),
-        Player("p17", "Gijs Hermans", Position.Defence, "Right back"),
+        Player("p16", "Bas Vermeulen", Position.Attack, "Spits", Availability.Out),
+        Player("p17", "Gijs Hermans", Position.Defence, "Rechtsback"),
         Player("p18", "Teun Martens", Position.Midfield, flag = PlayerFlag.Stalled),
     )
     private var nextId = players.size + 1
@@ -65,12 +65,12 @@ class MockTeamRepository : TeamRepository {
     }
 
     override fun nextSessionDraft() = SessionDraft(
-        day = "Thursday",
+        day = "Donderdag",
         time = "19:00",
-        theme = "Pressing & switching",
+        theme = "Druk zetten & omschakelen",
         minutes = 90,
     )
 
     override fun needsYou(): List<Attention> =
-        players.filter { it.id == "p2" }.map { Attention(it, "1v1 defending — flat 5 weeks") }
+        players.filter { it.id == "p2" }.map { Attention(it, "1-tegen-1 verdedigen — 5 weken stil") }
 }
