@@ -37,5 +37,5 @@ Dit is een groepsproject voor Fontys. We zijn met z'n tweeën: Berkan en ik (You
 
 ## AI-gebruik
 
-Ik gebruik AI-hulp bij het schrijven van code en teksten voor dit project. Alles wat ik toevoeg test ik zelf
-voordat het in `main` komt (zie `docs/testverslag.md`).
+Ik heb AI-hulp gebruikt om dingen te testen, bij het schrijven van de documentatie en bij het maken van de code
+(de database en de koppeling met de app). Wat getest is en wat nog niet, staat in `docs/testverslag.md`.
