@@ -25,7 +25,11 @@ data class Player(
     val role: String = position.label,
     val availability: Availability = Availability.In,
     val flag: PlayerFlag? = null,
+    val age: Int? = null,
+    val shirtNumber: Int? = null,
 ) {
+    val firstName: String get() = name.substringBefore(' ')
+
     val initials: String
         get() = name.split(' ')
             .filter { it.isNotBlank() }
@@ -58,4 +62,29 @@ data class SessionDraft(
 data class Attention(
     val player: Player,
     val detail: String,
+)
+
+/** Area a development point belongs to; the chips on the "new point" sheet. */
+enum class PointCategory(val label: String) {
+    Defending("Verdedigen"),
+    Passing("Passen"),
+    Speed("Snelheid"),
+    BallControl("Balcontrole"),
+}
+
+/** Something a player works on, scored 1–5 by the trainer after sessions. */
+data class DevelopmentPoint(
+    val id: String,
+    val playerId: String,
+    val title: String,
+    val category: PointCategory,
+    val score: Double,
+    /** Change since the previous reading; `null` when there's only one reading so far. */
+    val change: Double?,
+    val weeksOpen: Int,
+)
+
+data class PlayerStats(
+    val sessions: Int,
+    val attendancePercent: Int,
 )

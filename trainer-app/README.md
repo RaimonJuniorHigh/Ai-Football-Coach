@@ -30,7 +30,7 @@ Or open `trainer-app/` in Android Studio and run the `androidApp` configuration.
 
 ## Screens implemented
 
-From the Claude design "AI Football Coach - Trainer App v2":
+From the Claude design "AI Football Coach - Trainer App v2". The design is in English; all app text is Dutch.
 
 | # | Screen |
 |---|--------|
@@ -40,3 +40,6 @@ From the Claude design "AI Football Coach - Trainer App v2":
 | 14 | Onboarding · invite players (step 3 of 3) |
 | 02 | Today (trainer dashboard) |
 | 03 | Squad |
+| 04 | Player (development points) |
+| 15 | Add a development point (sheet) |
+| 16 | Log an observation after training (sheet) |

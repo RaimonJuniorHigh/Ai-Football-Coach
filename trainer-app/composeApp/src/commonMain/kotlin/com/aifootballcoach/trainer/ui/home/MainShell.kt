@@ -26,6 +26,7 @@ import com.aifootballcoach.trainer.data.TeamRepository
 import com.aifootballcoach.trainer.theme.CoachColors
 import com.aifootballcoach.trainer.ui.components.CoachBottomBar
 import com.aifootballcoach.trainer.ui.components.Tab
+import com.aifootballcoach.trainer.ui.player.PlayerFlow
 import com.aifootballcoach.trainer.ui.squad.SquadScreen
 
 /** Height of the floating tab bar plus its bottom margin; content scrolls under it. */
@@ -35,6 +36,7 @@ private val BottomBarSpace = 60.dp + 12.dp + 16.dp
 @Composable
 fun MainShell(repository: TeamRepository, initialTab: Tab = Tab.Today) {
     var tab by remember { mutableStateOf(initialTab) }
+    var openPlayerId by remember { mutableStateOf<String?>(null) }
     val players = remember { repository.players() }
 
     val statusBar = WindowInsets.statusBars.asPaddingValues()
@@ -43,6 +45,11 @@ fun MainShell(repository: TeamRepository, initialTab: Tab = Tab.Today) {
         top = statusBar.calculateTopPadding(),
         bottom = navBar.calculateBottomPadding() + BottomBarSpace,
     )
+
+    openPlayerId?.let { playerId ->
+        PlayerFlow(repository, startPlayerId = playerId, onClose = { openPlayerId = null })
+        return
+    }
 
     Box(Modifier.fillMaxSize().background(CoachColors.Paper)) {
         when (tab) {
@@ -59,14 +66,14 @@ fun MainShell(repository: TeamRepository, initialTab: Tab = Tab.Today) {
                 ),
                 needsYou = repository.needsYou(),
                 onReviewDraft = { /* TODO: session review (design 07) */ },
-                onOpenAttention = { /* TODO: player detail (design 04) */ },
+                onOpenAttention = { openPlayerId = it.player.id },
                 contentPadding = contentPadding,
             )
 
             Tab.Squad -> SquadScreen(
                 teamName = repository.loadTeam().name,
                 players = players,
-                onOpenPlayer = { /* TODO: player detail (design 04) */ },
+                onOpenPlayer = { openPlayerId = it.id },
                 contentPadding = contentPadding,
             )
 

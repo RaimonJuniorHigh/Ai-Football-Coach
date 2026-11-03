@@ -36,6 +36,7 @@ import com.aifootballcoach.trainer.ui.components.CoachIcons
 import com.aifootballcoach.trainer.ui.components.InitialsAvatar
 import com.aifootballcoach.trainer.ui.components.PillButton
 import com.aifootballcoach.trainer.ui.components.SectionLabel
+import com.aifootballcoach.trainer.ui.components.StatCard
 
 data class SquadStats(val available: Int, val squad: Int, val stalled: Int)
 
@@ -79,9 +80,9 @@ fun TodayScreen(
 
         Spacer(Modifier.height(10.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            StatCard(stats.available, "beschikbaar", Modifier.weight(1f))
-            StatCard(stats.squad, "selectie", Modifier.weight(1f))
-            StatCard(stats.stalled, "vastgelopen", Modifier.weight(1f), valueColor = CoachColors.Alert)
+            StatCard(stats.available.toString(), "beschikbaar", Modifier.weight(1f))
+            StatCard(stats.squad.toString(), "selectie", Modifier.weight(1f))
+            StatCard(stats.stalled.toString(), "vastgelopen", Modifier.weight(1f), valueColor = CoachColors.Alert)
         }
 
         if (needsYou.isNotEmpty()) {
@@ -145,23 +146,6 @@ private fun DraftCard(draft: SessionDraft, onReview: () -> Unit) {
             contentColor = CoachColors.Ink,
             height = 46.dp,
         )
-    }
-}
-
-@Composable
-private fun StatCard(value: Int, label: String, modifier: Modifier, valueColor: Color = CoachColors.Ink) {
-    Column(
-        modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(CoachColors.Card)
-            .padding(horizontal = 12.dp, vertical = 12.dp),
-    ) {
-        Text(
-            value.toString(),
-            style = MaterialTheme.typography.headlineLarge.copy(fontSize = 22.sp, lineHeight = 26.sp),
-            color = valueColor,
-        )
-        Text(label, style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
     }
 }
 

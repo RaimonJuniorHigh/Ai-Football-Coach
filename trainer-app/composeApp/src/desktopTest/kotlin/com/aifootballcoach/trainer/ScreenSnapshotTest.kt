@@ -1,5 +1,6 @@
 package com.aifootballcoach.trainer
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ImageComposeScene
 import androidx.compose.ui.unit.Density
@@ -11,6 +12,9 @@ import com.aifootballcoach.trainer.ui.onboarding.AddPlayersScreen
 import com.aifootballcoach.trainer.ui.onboarding.InvitePlayersScreen
 import com.aifootballcoach.trainer.ui.onboarding.TeamSetupScreen
 import com.aifootballcoach.trainer.ui.onboarding.WelcomeScreen
+import com.aifootballcoach.trainer.ui.player.AddPointSheet
+import com.aifootballcoach.trainer.ui.player.LogObservationSheet
+import com.aifootballcoach.trainer.ui.player.PlayerScreen
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -41,6 +45,36 @@ class ScreenSnapshotTest {
         }
         snapshot("02-today") { MainShell(repository, initialTab = Tab.Today) }
         snapshot("03-squad") { MainShell(repository, initialTab = Tab.Squad) }
+    }
+
+    @Test
+    fun renderPlayerScreens() {
+        val sem = repository.players().first { it.id == "p2" }
+        val points = repository.developmentPoints(sem.id)
+        val player: @Composable () -> Unit = {
+            PlayerScreen(
+                player = sem,
+                stats = repository.playerStats(sem.id),
+                points = points,
+                onBack = {},
+                onAddPoint = {},
+                onOpenPoint = {},
+                onLogObservation = {},
+            )
+        }
+        snapshot("04-player", player)
+        snapshot("15-add-point") {
+            Box {
+                player()
+                AddPointSheet(sem, onSave = { _, _, _ -> }, onDismiss = {}, initialTitle = "1-tegen-1 — binnenkant dichtzetten")
+            }
+        }
+        snapshot("16-log-observation") {
+            Box {
+                player()
+                LogObservationSheet(sem, points.first(), hasNextPlayer = true, onSave = { _, _ -> }, onDismiss = {}, initialRating = 4)
+            }
+        }
     }
 
     private fun snapshot(name: String, content: @Composable () -> Unit) {
