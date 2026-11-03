@@ -57,6 +57,14 @@ object CoachIcons {
         lineIcon("ChevronLeft") { moveTo(14.5f, 6f); lineTo(8.5f, 12f); lineTo(14.5f, 18f) }
     }
 
+    val Close: ImageVector by lazy {
+        lineIcon("Close") { moveTo(6.5f, 6.5f); lineTo(17.5f, 17.5f); moveTo(17.5f, 6.5f); lineTo(6.5f, 17.5f) }
+    }
+
+    val Check: ImageVector by lazy {
+        lineIcon("Check") { moveTo(5f, 12.5f); lineTo(10f, 17.5f); lineTo(19f, 7f) }
+    }
+
     val Shield: ImageVector by lazy {
         lineIcon("Shield") {
             moveTo(12f, 3f); lineTo(19f, 6f); lineTo(19f, 11f)

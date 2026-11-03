@@ -24,6 +24,7 @@ import com.aifootballcoach.trainer.data.Availability
 import com.aifootballcoach.trainer.data.PlayerFlag
 import com.aifootballcoach.trainer.data.TeamRepository
 import com.aifootballcoach.trainer.theme.CoachColors
+import com.aifootballcoach.trainer.ui.brief.BriefFlow
 import com.aifootballcoach.trainer.ui.components.CoachBottomBar
 import com.aifootballcoach.trainer.ui.components.Tab
 import com.aifootballcoach.trainer.ui.player.PlayerFlow
@@ -34,9 +35,14 @@ private val BottomBarSpace = 60.dp + 12.dp + 16.dp
 
 /** The signed-in app: tab content with the floating bottom bar on top. */
 @Composable
-fun MainShell(repository: TeamRepository, initialTab: Tab = Tab.Today) {
+fun MainShell(
+    repository: TeamRepository,
+    initialTab: Tab = Tab.Today,
+    onDarkBackground: (Boolean) -> Unit = {},
+) {
     var tab by remember { mutableStateOf(initialTab) }
     var openPlayerId by remember { mutableStateOf<String?>(null) }
+    var briefOpen by remember { mutableStateOf(false) }
     val players = remember { repository.players() }
 
     val statusBar = WindowInsets.statusBars.asPaddingValues()
@@ -45,6 +51,19 @@ fun MainShell(repository: TeamRepository, initialTab: Tab = Tab.Today) {
         top = statusBar.calculateTopPadding(),
         bottom = navBar.calculateBottomPadding() + BottomBarSpace,
     )
+
+    if (briefOpen) {
+        BriefFlow(
+            repository = repository,
+            onClose = { briefOpen = false },
+            onDrafted = {
+                briefOpen = false
+                tab = Tab.Today
+            },
+            onDarkBackground = onDarkBackground,
+        )
+        return
+    }
 
     openPlayerId?.let { playerId ->
         PlayerFlow(repository, startPlayerId = playerId, onClose = { openPlayerId = null })
@@ -77,7 +96,9 @@ fun MainShell(repository: TeamRepository, initialTab: Tab = Tab.Today) {
                 contentPadding = contentPadding,
             )
 
-            Tab.Assistant, Tab.Sessions -> Box(
+            Tab.Assistant -> AssistantScreen(onNewSession = { briefOpen = true }, contentPadding = contentPadding)
+
+            Tab.Sessions -> Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize().padding(contentPadding),
             ) {

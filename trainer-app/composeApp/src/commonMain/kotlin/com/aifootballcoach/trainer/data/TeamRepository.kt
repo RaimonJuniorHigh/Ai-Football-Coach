@@ -21,6 +21,10 @@ interface TeamRepository {
     fun addDevelopmentPoint(playerId: String, title: String, category: PointCategory, score: Int): DevelopmentPoint
     /** Saves the trainer's 1–5 rating after a session and updates the point's score. */
     fun logObservation(pointId: String, rating: Int, note: String)
+    fun nextSession(): PlannedSession
+    fun focusSuggestions(): List<FocusSuggestion>
+    /** Asks the assistant for a session draft; it becomes [nextSessionDraft]. */
+    fun draftSession(brief: SessionBrief): SessionDraft
 }
 
 class MockTeamRepository : TeamRepository {
@@ -81,12 +85,14 @@ class MockTeamRepository : TeamRepository {
         players.removeAll { it.id == id }
     }
 
-    override fun nextSessionDraft() = SessionDraft(
+    private var draft: SessionDraft? = SessionDraft(
         day = "Donderdag",
         time = "19:00",
         theme = "Druk zetten & omschakelen",
         minutes = 90,
     )
+
+    override fun nextSessionDraft() = draft
 
     override fun needsYou(): List<Attention> =
         players.filter { it.id == "p2" }.map { Attention(it, "1-tegen-1 verdedigen — 5 weken stil") }
@@ -114,4 +120,25 @@ class MockTeamRepository : TeamRepository {
         val score = round((point.score * 2 + rating) / 3 * 10) / 10
         points[index] = point.copy(score = score, change = score - point.score)
     }
+
+    override fun nextSession() = PlannedSession(
+        day = "Donderdag",
+        dateLabel = "Do 24 sep",
+        time = "19:00",
+        minutes = team.sessionMinutes,
+    )
+
+    override fun focusSuggestions() = listOf(
+        FocusSuggestion("f1", "1-tegen-1 verdedigen", "3 spelers, al 5 weken geen vooruitgang"),
+        FocusSuggestion("f2", "Lange bal & van kant wisselen", "Open punt bij Sem, Jesse en 2 anderen"),
+        FocusSuggestion("f3", "Druk zetten na balverlies", "Laatste 2 wedstrijden de meeste tegengoals"),
+    )
+
+    // TODO: call the shared backend / AI once it exists; for now the draft is built locally.
+    override fun draftSession(brief: SessionBrief) = SessionDraft(
+        day = brief.session.day,
+        time = brief.session.time,
+        theme = brief.focus.joinToString(", "),
+        minutes = brief.session.minutes,
+    ).also { draft = it }
 }

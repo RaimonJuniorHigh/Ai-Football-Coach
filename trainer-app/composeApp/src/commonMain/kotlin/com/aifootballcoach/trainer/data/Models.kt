@@ -88,3 +88,39 @@ data class PlayerStats(
     val sessions: Int,
     val attendancePercent: Int,
 )
+
+/** The next training on the calendar, as shown in step 1 of the brief. */
+data class PlannedSession(
+    val day: String,
+    val dateLabel: String,
+    val time: String,
+    val minutes: Int,
+)
+
+/** A focus theme the assistant suggests for a session, with why. */
+data class FocusSuggestion(
+    val id: String,
+    val title: String,
+    val reason: String,
+)
+
+enum class PitchSpace(val label: String) {
+    Half("Half veld"),
+    Full("Heel veld"),
+}
+
+enum class Intensity(val label: String) {
+    Light("Licht"),
+    Medium("Gemiddeld"),
+    High("Zwaar"),
+}
+
+/** Everything the trainer fills in before the assistant drafts a session. */
+data class SessionBrief(
+    val session: PlannedSession,
+    val absentPlayerIds: Set<String>,
+    val focus: List<String>,
+    val space: PitchSpace,
+    val intensity: Intensity,
+    val notes: String,
+)

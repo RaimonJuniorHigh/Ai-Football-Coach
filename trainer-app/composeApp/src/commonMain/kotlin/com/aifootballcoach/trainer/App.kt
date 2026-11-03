@@ -76,7 +76,7 @@ fun App(
                 onDone = { screen = Screen.Main },
             )
 
-            Screen.Main -> MainShell(repository)
+            Screen.Main -> MainShell(repository, onDarkBackground = onDarkBackground)
         }
     }
 }

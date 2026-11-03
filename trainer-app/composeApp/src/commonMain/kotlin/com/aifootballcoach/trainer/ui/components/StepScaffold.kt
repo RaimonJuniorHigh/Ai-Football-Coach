@@ -1,6 +1,7 @@
 package com.aifootballcoach.trainer.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,15 +15,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -59,6 +67,11 @@ fun StepScaffold(
     buttonText: String,
     onButtonClick: () -> Unit,
     buttonEnabled: Boolean = true,
+    buttonColor: Color = CoachColors.Ink,
+    buttonIcon: ImageVector? = null,
+    /** Shows a round back (or close, on step 1) button left of the progress bar. */
+    onBack: (() -> Unit)? = null,
+    backIcon: ImageVector = CoachIcons.ChevronLeft,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
@@ -69,7 +82,22 @@ fun StepScaffold(
             .imePadding()
             .padding(horizontal = 20.dp),
     ) {
-        StepProgress(current = step, total = totalSteps, modifier = Modifier.padding(top = 12.dp))
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 12.dp)) {
+            if (onBack != null) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(CoachColors.Card)
+                        .clickable(onClick = onBack),
+                ) {
+                    Icon(backIcon, contentDescription = "Terug", tint = CoachColors.Ink, modifier = Modifier.size(16.dp))
+                }
+                Spacer(Modifier.width(12.dp))
+            }
+            StepProgress(current = step, total = totalSteps, modifier = Modifier.weight(1f))
+        }
         Column(
             Modifier
                 .weight(1f)
@@ -91,6 +119,8 @@ fun StepScaffold(
             text = buttonText,
             onClick = onButtonClick,
             enabled = buttonEnabled,
+            containerColor = buttonColor,
+            icon = buttonIcon,
             modifier = Modifier.padding(bottom = 16.dp),
         )
     }

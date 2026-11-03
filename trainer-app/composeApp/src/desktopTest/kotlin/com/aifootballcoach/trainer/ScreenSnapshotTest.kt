@@ -4,8 +4,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ImageComposeScene
 import androidx.compose.ui.unit.Density
+import com.aifootballcoach.trainer.data.Availability
+import com.aifootballcoach.trainer.data.Intensity
 import com.aifootballcoach.trainer.data.MockTeamRepository
+import com.aifootballcoach.trainer.data.PitchSpace
 import com.aifootballcoach.trainer.theme.CoachTheme
+import com.aifootballcoach.trainer.ui.brief.BriefConditionsScreen
+import com.aifootballcoach.trainer.ui.brief.BriefFocusScreen
+import com.aifootballcoach.trainer.ui.brief.BriefWhoScreen
+import com.aifootballcoach.trainer.ui.brief.DraftingScreen
 import com.aifootballcoach.trainer.ui.components.Tab
 import com.aifootballcoach.trainer.ui.home.MainShell
 import com.aifootballcoach.trainer.ui.onboarding.AddPlayersScreen
@@ -74,6 +81,57 @@ class ScreenSnapshotTest {
                 player()
                 LogObservationSheet(sem, points.first(), hasNextPlayer = true, onSave = { _, _ -> }, onDismiss = {}, initialRating = 4)
             }
+        }
+    }
+
+    @Test
+    fun renderBriefScreens() {
+        val players = repository.players()
+        val suggestions = repository.focusSuggestions()
+        snapshot("assistant") { MainShell(repository, initialTab = Tab.Assistant) }
+        snapshot("17-brief-who") {
+            BriefWhoScreen(
+                session = repository.nextSession(),
+                players = players,
+                absentIds = players.filter { it.availability == Availability.Out }.map { it.id }.toSet(),
+                onToggleAbsent = {},
+                onNext = {},
+                onClose = {},
+            )
+        }
+        snapshot("brief-focus") {
+            BriefFocusScreen(
+                suggestions = suggestions,
+                selectedIds = setOf(suggestions.first().id),
+                onToggle = {},
+                ownTheme = "",
+                onOwnThemeChange = {},
+                onNext = {},
+                onBack = {},
+            )
+        }
+        snapshot("18-brief-conditions") {
+            BriefConditionsScreen(
+                space = PitchSpace.Half,
+                onSpaceChange = {},
+                intensity = Intensity.Medium,
+                onIntensityChange = {},
+                notes = "Twee keepers. JO15 heeft de andere helft.",
+                onNotesChange = {},
+                onDraft = {},
+                onBack = {},
+            )
+        }
+        snapshot("19-drafting") {
+            DraftingScreen(
+                day = "Donderdag",
+                steps = listOf(
+                    "Open punten van 14 spelers gelezen",
+                    "Laatste 4 trainingen bekeken",
+                    "Oefeningen kiezen die op een half veld passen",
+                ),
+                stepsDone = 2,
+            )
         }
     }
 
