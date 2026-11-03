@@ -1,0 +1,6 @@
+# Wie wordt automatisch gevraagd om een pull request te bekijken.
+/supabase/                                           @RaimonJuniorHigh
+/trainer-app/composeApp/src/commonMain/kotlin/com/aifootballcoach/trainer/data/   @RaimonJuniorHigh
+/trainer-app/composeApp/src/commonMain/kotlin/com/aifootballcoach/trainer/ui/     @BerkanHRGL
+/trainer-app/composeApp/src/commonMain/kotlin/com/aifootballcoach/trainer/theme/  @BerkanHRGL
+/trainer-app/androidApp/                             @BerkanHRGL
