@@ -61,6 +61,6 @@ From the design "AI Football Coach - Trainer App v2". The design is in English; 
 | 15 | Add a development point (sheet) |
 | 16 | Log an observation after training (sheet) |
 | 17 | Brief · step 1 — when & who |
-| — | Brief · step 2 — focus (not in the design; AI-suggested themes) |
+| — | Brief · step 2 — focus (not in the design; themes from the squad's stats) |
 | 18 | Brief · step 3 — conditions |
 | 19 | Drafting |

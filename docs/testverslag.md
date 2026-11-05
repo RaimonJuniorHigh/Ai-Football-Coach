@@ -70,7 +70,6 @@ Met een Android-emulator (API 37) en de lokale database:
 - De app op de emulator met de **online** database. De emulator had geen internet. De code zelf heb ik wel tegen de online database laten draaien vanaf mijn computer.
 - Een **echte telefoon**.
 - **iOS**: daar zijn de database-instellingen nog niet gemaakt.
-- **De AI-assistent**: die heeft nog geen API en geen sleutel. Het "concept" is wat de trainer zelf invult.
 - Meerdere trainers tegelijk en veel data (alleen kleine hoeveelheden).
 
 ## Zelf herhalen

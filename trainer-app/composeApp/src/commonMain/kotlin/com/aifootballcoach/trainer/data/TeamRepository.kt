@@ -32,6 +32,6 @@ interface TeamRepository {
     fun focusSuggestions(): List<FocusSuggestion>
     fun nextSessionDraft(): SessionDraft?
 
-    /** Bewaart wat de trainer heeft ingevuld als concept voor de volgende training. Er zit nog geen assistent (AI) achter. */
+    /** Bewaart wat de trainer heeft ingevuld als concept voor de volgende training. Er zit nog geen assistent achter. */
     fun draftSession(brief: SessionBrief): SessionDraft
 }
