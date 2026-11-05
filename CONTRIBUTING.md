@@ -39,7 +39,6 @@ We mogen elkaars deel aanpassen, maar altijd via een pull request waar de ander 
 3. **Verandert er iets aan `TeamRepository` of de modellen in `data/`?** Dan zet ik dat bovenaan de pull request en vraag ik de ander om te kijken, want alle schermen hangen daaraan.
 4. **Heeft een nieuw scherm data nodig?** Dan maken we eerst een issue. De een maakt de data klaar terwijl de ander het scherm bouwt.
 5. **Geen sleutels in git.** De database-sleutel staat in `trainer-app/local.properties` (die staat in `.gitignore`). Alleen de publishable sleutel gebruiken, nooit de secret.
-6. **De AI-assistent bestaat nog niet.** Er is geen API en geen sleutel. Wat een plaatshouder is, laten we ook zo zien in de app.
 
 ## Lokaal draaien
 

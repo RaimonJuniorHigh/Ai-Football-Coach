@@ -4,7 +4,7 @@
 --  * Een trainer legt oefeningen vast, bijvoorbeeld: spits, afwerken, 100 schoten, 100 raak  (drill_results).
 --  * Uit de oefeningen rekenen we per speler een stat van 1 tot 20 uit (view player_stats). 20 is het best.
 --  * Uit de stats rekenen we per positie een totaalcijfer van 1 tot 99 uit, zoals een FIFA-kaartje (view player_cards).
---  * Wedstrijden staan er ook in (matches en match_players). Voor nu met vaste testdata; later kan de AI die bekijken.
+--  * Wedstrijden staan er ook in (matches en match_players). Voor nu met vaste testdata.
 -- De database blijft klein: 2 opzoektabellen, 3 gewone tabellen en 2 views.
 
 -- ===== Opzoektabellen (vaste gegevens) =====
