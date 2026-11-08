@@ -34,4 +34,10 @@ interface TeamRepository {
 
     /** Bewaart wat de trainer heeft ingevuld als concept voor de volgende training. Er zit nog geen assistent achter. */
     fun draftSession(brief: SessionBrief): SessionDraft
+
+    /**
+     * Bewaart het nagekeken concept als verstuurd naar de spelers. Voor nu blijft dat in het geheugen:
+     * de web-app van de spelers ziet het pas als de database een tabel voor trainingen heeft.
+     */
+    fun sendDraft(draft: SessionDraft, homeExercises: Boolean)
 }
