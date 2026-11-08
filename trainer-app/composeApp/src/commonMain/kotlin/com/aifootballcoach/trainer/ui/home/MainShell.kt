@@ -30,6 +30,7 @@ import com.aifootballcoach.trainer.ui.brief.BriefFlow
 import com.aifootballcoach.trainer.ui.components.CoachBottomBar
 import com.aifootballcoach.trainer.ui.components.Tab
 import com.aifootballcoach.trainer.ui.player.PlayerFlow
+import com.aifootballcoach.trainer.ui.session.SessionReviewFlow
 import com.aifootballcoach.trainer.ui.squad.SquadScreen
 
 /** Height of the floating tab bar plus its bottom margin; content scrolls under it. */
@@ -45,6 +46,7 @@ fun MainShell(
     var tab by remember { mutableStateOf(initialTab) }
     var openPlayerId by remember { mutableStateOf<String?>(null) }
     var briefOpen by remember { mutableStateOf(false) }
+    var reviewOpen by remember { mutableStateOf(false) }
     val players = remember { repository.players() }
     // Read again each time the shell is shown, so new drill results show up after closing a player.
     val needsYou = repository.needsYou()
@@ -69,6 +71,22 @@ fun MainShell(
         return
     }
 
+    val draft = repository.nextSessionDraft()
+    if (reviewOpen && draft != null) {
+        val closeReview = {
+            onDarkBackground(false)
+            reviewOpen = false
+        }
+        SessionReviewFlow(
+            repository = repository,
+            draft = draft,
+            onClose = closeReview,
+            onSent = closeReview,
+            onDarkBackground = onDarkBackground,
+        )
+        return
+    }
+
     openPlayerId?.let { playerId ->
         PlayerFlow(repository, startPlayerId = playerId, onClose = { openPlayerId = null })
         return
@@ -79,14 +97,14 @@ fun MainShell(
             Tab.Today -> TodayScreen(
                 dateLabel = now().date.longLabel(),
                 greeting = greetingFor(now().hour),
-                draft = repository.nextSessionDraft(),
+                draft = draft,
                 stats = SquadStats(
                     available = players.count { it.availability == Availability.In },
                     squad = players.size,
                     needsAttention = needsYou.size,
                 ),
                 needsYou = needsYou,
-                onReviewDraft = { /* TODO: session review (design 07) */ },
+                onReviewDraft = { reviewOpen = true },
                 onOpenAttention = { openPlayerId = it.player.id },
                 contentPadding = contentPadding,
             )

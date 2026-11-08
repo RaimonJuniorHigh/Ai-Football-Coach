@@ -97,7 +97,17 @@ class SupabaseTeamRepository(private val remote: SupabaseRemote) : TeamRepositor
             dateLabel = brief.session.dateLabel,
             theme = brief.focus.joinToString(", "),
             minutes = brief.session.minutes,
+            blocks = SessionPlanner.blocksFor(
+                brief = brief,
+                available = players.count { it.id !in brief.absentPlayerIds },
+                reasons = focusSuggestions().associate { it.title to it.reason },
+            ),
         ).also { draft = it }
+
+    // TODO: opslaan in een tabel voor trainingen zodra de database die heeft, zodat de web-app het kan laten zien.
+    override fun sendDraft(draft: SessionDraft, homeExercises: Boolean) {
+        this.draft = draft
+    }
 
     private fun newInviteCode(): String {
         val alphabet = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789"
