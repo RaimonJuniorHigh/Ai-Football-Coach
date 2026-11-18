@@ -16,6 +16,7 @@ class SupabaseTeamRepository(private val remote: SupabaseRemote) : TeamRepositor
     private var overalls: Map<String, Int> = emptyMap()
     private var squadStats: Map<String, List<PlayerStat>> = emptyMap()
     private var draft: SessionDraft? = null
+    private val sent = mutableListOf<SessionDraft>()
 
     override suspend fun refresh() {
         val saved = remote.fetchTeam()
@@ -97,6 +98,7 @@ class SupabaseTeamRepository(private val remote: SupabaseRemote) : TeamRepositor
             dateLabel = brief.session.dateLabel,
             theme = brief.focus.joinToString(", "),
             minutes = brief.session.minutes,
+            date = brief.session.date,
             blocks = SessionPlanner.blocksFor(
                 brief = brief,
                 available = players.count { it.id !in brief.absentPlayerIds },
@@ -107,7 +109,11 @@ class SupabaseTeamRepository(private val remote: SupabaseRemote) : TeamRepositor
     // TODO: opslaan in een tabel voor trainingen zodra de database die heeft, zodat de web-app het kan laten zien.
     override fun sendDraft(draft: SessionDraft, homeExercises: Boolean) {
         this.draft = draft
+        sent.removeAll { it.date != null && it.date == draft.date }
+        sent += draft
     }
+
+    override fun sentSessions(): List<SessionDraft> = sent.toList()
 
     private fun newInviteCode(): String {
         val alphabet = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789"
