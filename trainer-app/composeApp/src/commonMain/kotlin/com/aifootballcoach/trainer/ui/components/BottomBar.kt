@@ -49,7 +49,7 @@ fun CoachBottomBar(selected: Tab, onSelect: (Tab) -> Unit, modifier: Modifier = 
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .height(40.dp)
+                    .height(48.dp)
                     .clip(RoundedCornerShape(percent = 50))
                     .background(if (isSelected) CoachColors.Lime else Color.Transparent)
                     .clickable { onSelect(tab) }

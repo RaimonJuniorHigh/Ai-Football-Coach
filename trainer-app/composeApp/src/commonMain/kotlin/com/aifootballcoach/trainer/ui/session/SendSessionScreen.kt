@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,6 +60,7 @@ fun SendSessionScreen(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
+                .minimumInteractiveComponentSize()
                 .size(32.dp)
                 .clip(CircleShape)
                 .background(CoachColors.Card)

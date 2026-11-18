@@ -72,6 +72,18 @@ class ScreenSnapshotTest {
                 RecordDrillSheet(sem, onSave = { _, _, _ -> }, onDismiss = {}, initialAttempts = "100", initialSuccesses = "70")
             }
         }
+        snapshot("04-player-stats-help") {
+            PlayerScreen(player = sem, profile = profile, onBack = {}, onRecordDrill = {}, statsHelpOpen = true)
+        }
+        snapshot("04-player-load-error") {
+            PlayerScreen(
+                player = sem,
+                profile = null,
+                loadError = "Geen verbinding met de server. Controleer je internet en probeer het opnieuw.",
+                onBack = {},
+                onRecordDrill = {},
+            )
+        }
     }
 
     @Test
