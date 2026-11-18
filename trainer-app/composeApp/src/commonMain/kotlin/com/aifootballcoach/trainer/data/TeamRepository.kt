@@ -40,4 +40,7 @@ interface TeamRepository {
      * de web-app van de spelers ziet het pas als de database een tabel voor trainingen heeft.
      */
     fun sendDraft(draft: SessionDraft, homeExercises: Boolean)
+
+    /** Trainingen die al naar de spelers zijn gestuurd. Staat voor nu alleen in het geheugen, net als [sendDraft]. */
+    fun sentSessions(): List<SessionDraft>
 }

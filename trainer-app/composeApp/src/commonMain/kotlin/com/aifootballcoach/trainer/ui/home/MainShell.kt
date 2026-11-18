@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +29,9 @@ import com.aifootballcoach.trainer.ui.components.CoachBottomBar
 import com.aifootballcoach.trainer.ui.components.Tab
 import com.aifootballcoach.trainer.ui.player.PlayerFlow
 import com.aifootballcoach.trainer.ui.session.SessionReviewFlow
+import com.aifootballcoach.trainer.ui.sessions.SessionLists
+import com.aifootballcoach.trainer.ui.sessions.SessionStatus
+import com.aifootballcoach.trainer.ui.sessions.SessionsScreen
 import com.aifootballcoach.trainer.ui.squad.SquadScreen
 
 /** Height of the floating tab bar plus its bottom margin; content scrolls under it. */
@@ -119,12 +120,19 @@ fun MainShell(
 
             Tab.Assistant -> AssistantScreen(onNewSession = { briefOpen = true }, contentPadding = contentPadding)
 
-            Tab.Sessions -> Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize().padding(contentPadding),
-            ) {
-                Text("${tab.label} komt later", style = MaterialTheme.typography.bodyLarge, color = CoachColors.Muted)
-            }
+            Tab.Sessions -> SessionsScreen(
+                sessions = SessionLists.build(now().date, repository.loadTeam(), draft, repository.sentSessions()),
+                squadSize = players.size,
+                onNewSession = { briefOpen = true },
+                onOpenUpcoming = { session ->
+                    when (session.status) {
+                        SessionStatus.Draft -> reviewOpen = true
+                        SessionStatus.Empty -> briefOpen = true
+                        SessionStatus.Sent -> Unit
+                    }
+                },
+                contentPadding = contentPadding,
+            )
         }
 
         CoachBottomBar(

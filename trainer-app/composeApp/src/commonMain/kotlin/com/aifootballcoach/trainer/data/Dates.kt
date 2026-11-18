@@ -22,6 +22,12 @@ fun LocalDate.dayName(): String = dayNames[dayOfWeek.ordinal]
 /** "Do 24 sep" */
 fun LocalDate.shortLabel(): String = "${dayNamesShort[dayOfWeek.ordinal]} $day ${monthNamesShort[month.ordinal]}"
 
+/** "Do" */
+fun LocalDate.dayShort(): String = dayNamesShort[dayOfWeek.ordinal]
+
+/** "24 sep" */
+fun LocalDate.dayMonth(): String = "$day ${monthNamesShort[month.ordinal]}"
+
 /** "Dinsdag 22 september" */
 fun LocalDate.longLabel(): String = "${dayName()} $day ${monthNames[month.ordinal]}"
 
