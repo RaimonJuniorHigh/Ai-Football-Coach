@@ -23,7 +23,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,11 +38,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aifootballcoach.trainer.data.DrillResult
 import com.aifootballcoach.trainer.data.MatchAppearance
+import com.aifootballcoach.trainer.data.Player
 import com.aifootballcoach.trainer.data.PlayerProfile
 import com.aifootballcoach.trainer.data.RatingColors
+import com.aifootballcoach.trainer.data.RatingTier
 import com.aifootballcoach.trainer.data.StatType
 import com.aifootballcoach.trainer.data.formatShortDate
-import com.aifootballcoach.trainer.data.Player
 import com.aifootballcoach.trainer.theme.CoachColors
 import com.aifootballcoach.trainer.ui.components.CoachIcons
 import com.aifootballcoach.trainer.ui.components.InitialsAvatar
@@ -55,6 +61,9 @@ fun PlayerScreen(
     player: Player,
     profile: PlayerProfile?,
     loadError: String? = null,
+    onRetry: () -> Unit = {},
+    /** Opens the stats explanation straight away; used for the screenshot test. */
+    statsHelpOpen: Boolean = false,
     onBack: () -> Unit,
     onRecordDrill: () -> Unit,
 ) {
@@ -74,6 +83,7 @@ fun PlayerScreen(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
+                    .minimumInteractiveComponentSize()
                     .size(36.dp)
                     .clip(CircleShape)
                     .background(CoachColors.Card)
@@ -103,7 +113,17 @@ fun PlayerScreen(
 
             if (loadError != null) {
                 Spacer(Modifier.height(16.dp))
-                Text("Laden is niet gelukt: $loadError", style = MaterialTheme.typography.bodyMedium, color = CoachColors.Alert)
+                Text(loadError, style = MaterialTheme.typography.bodyMedium, color = CoachColors.Alert)
+                Text(
+                    "Opnieuw proberen",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = CoachColors.Pitch,
+                    modifier = Modifier
+                        .padding(top = 4.dp)
+                        .clip(RoundedCornerShape(percent = 50))
+                        .clickable(onClick = onRetry)
+                        .minimumInteractiveComponentSize(),
+                )
             }
 
             if (profile != null) {
@@ -115,7 +135,7 @@ fun PlayerScreen(
                 }
 
                 Spacer(Modifier.height(24.dp))
-                SectionLabel("Stats")
+                StatsHeader(initiallyOpen = statsHelpOpen)
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     StatType.entries.forEach { type ->
                         StatRow(type, profile.stats.firstOrNull { it.stat == type }?.rating)
@@ -154,6 +174,62 @@ fun PlayerScreen(
             containerColor = CoachColors.Pitch,
             modifier = Modifier.padding(top = 8.dp, bottom = 12.dp),
         )
+    }
+}
+
+/** Score ranges per colour level, in the order of [RatingTier]. */
+private val tierRanges = listOf(
+    RatingTier.VeryLow to "1–4",
+    RatingTier.Low to "5–8",
+    RatingTier.Average to "9–12",
+    RatingTier.Good to "13–16",
+    RatingTier.Excellent to "17–20",
+)
+
+/** "Stats" header with a "Wat betekent dit?" link that opens a short explanation of the scores and colours. */
+@Composable
+private fun StatsHeader(initiallyOpen: Boolean) {
+    var open by remember { mutableStateOf(initiallyOpen) }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        SectionLabel("Stats", Modifier.weight(1f))
+        Text(
+            if (open) "Sluiten" else "Wat betekent dit?",
+            style = MaterialTheme.typography.labelMedium,
+            color = CoachColors.Pitch,
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .clip(RoundedCornerShape(percent = 50))
+                .clickable { open = !open }
+                .minimumInteractiveComponentSize()
+                .padding(horizontal = 8.dp),
+        )
+    }
+    if (open) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(CoachColors.Card)
+                .padding(14.dp),
+        ) {
+            Text(
+                "Elke stat is een cijfer van 1 tot 20. Het komt uit de oefeningen die je noteert: hoe vaker iets lukt, " +
+                    "hoe hoger het cijfer. Het totaal (1 tot 99) is het gemiddelde van de stats, waarbij per positie " +
+                    "andere stats zwaarder tellen. Een streepje betekent dat er nog geen oefening voor die stat is.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CoachColors.Ink,
+            )
+            Spacer(Modifier.height(10.dp))
+            tierRanges.forEach { (tier, range) ->
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 3.dp)) {
+                    Box(Modifier.size(10.dp).clip(CircleShape).background(Color(tier.argb)))
+                    Spacer(Modifier.width(8.dp))
+                    Text(range, style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold), color = CoachColors.Ink, modifier = Modifier.width(44.dp))
+                    Text(tier.label, style = MaterialTheme.typography.labelSmall, color = CoachColors.Muted)
+                }
+            }
+        }
     }
 }
 

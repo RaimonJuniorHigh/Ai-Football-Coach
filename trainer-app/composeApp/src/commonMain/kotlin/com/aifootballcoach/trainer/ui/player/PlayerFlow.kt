@@ -16,6 +16,7 @@ import androidx.compose.ui.backhandler.BackHandler
 import com.aifootballcoach.trainer.data.PlayerProfile
 import com.aifootballcoach.trainer.data.StatType
 import com.aifootballcoach.trainer.data.TeamRepository
+import com.aifootballcoach.trainer.ui.components.friendlyError
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
@@ -39,7 +40,7 @@ fun PlayerFlow(repository: TeamRepository, startPlayerId: String, onClose: () ->
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            loadError = e.message ?: "Onbekende fout"
+            loadError = friendlyError(e, "laden")
         }
     }
 
@@ -52,6 +53,7 @@ fun PlayerFlow(repository: TeamRepository, startPlayerId: String, onClose: () ->
             player = player,
             profile = profile,
             loadError = loadError,
+            onRetry = { version++ },
             onBack = onClose,
             onRecordDrill = {
                 sheetError = null
@@ -72,7 +74,7 @@ fun PlayerFlow(repository: TeamRepository, startPlayerId: String, onClose: () ->
                         } catch (e: CancellationException) {
                             throw e
                         } catch (e: Exception) {
-                            sheetError = e.message ?: "Opslaan is niet gelukt"
+                            sheetError = friendlyError(e, "opslaan")
                         }
                     }
                 },
