@@ -25,6 +25,7 @@ import com.aifootballcoach.trainer.data.TeamRepository
 import com.aifootballcoach.trainer.theme.CoachColors
 import com.aifootballcoach.trainer.theme.CoachTheme
 import com.aifootballcoach.trainer.ui.components.PillButton
+import com.aifootballcoach.trainer.ui.components.friendlyError
 import com.aifootballcoach.trainer.ui.home.MainShell
 import com.aifootballcoach.trainer.ui.onboarding.AddPlayersScreen
 import com.aifootballcoach.trainer.ui.onboarding.InvitePlayersScreen
@@ -72,7 +73,7 @@ fun App(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            problem = e.message ?: "Onbekende fout"
+            problem = friendlyError(e, "laden")
         }
     }
 
@@ -84,7 +85,7 @@ fun App(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                problem = e.message ?: "Onbekende fout"
+                problem = friendlyError(e, "opslaan")
             }
         }
     }
@@ -155,7 +156,7 @@ private fun StatusScreen(problem: String?, onRetry: () -> Unit) {
             CircularProgressIndicator(color = CoachColors.Pitch)
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text("De database is niet bereikbaar", style = MaterialTheme.typography.headlineLarge)
+                Text("Er ging iets mis", style = MaterialTheme.typography.headlineLarge)
                 Text(problem, style = MaterialTheme.typography.bodyMedium, color = CoachColors.Muted)
                 PillButton(text = "Opnieuw proberen", onClick = onRetry)
             }

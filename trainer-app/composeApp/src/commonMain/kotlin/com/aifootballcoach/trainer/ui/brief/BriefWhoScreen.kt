@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -109,6 +110,7 @@ private fun AvailabilityDot(player: Player, present: Boolean, onClick: () -> Uni
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
+            .minimumInteractiveComponentSize()
             .size(38.dp)
             .clip(CircleShape)
             .background(if (present) CoachColors.Pitch else CoachColors.Chip)

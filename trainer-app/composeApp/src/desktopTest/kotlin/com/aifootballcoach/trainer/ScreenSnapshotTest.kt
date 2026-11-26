@@ -1,6 +1,17 @@
 package com.aifootballcoach.trainer
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.aifootballcoach.trainer.data.SessionDraft
+import com.aifootballcoach.trainer.ui.components.CoachBottomBar
+import com.aifootballcoach.trainer.ui.sessions.SessionLists
+import com.aifootballcoach.trainer.ui.sessions.SessionsScreen
+import kotlinx.datetime.LocalDate
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ImageComposeScene
 import androidx.compose.ui.unit.Density
@@ -8,6 +19,7 @@ import com.aifootballcoach.trainer.data.Availability
 import com.aifootballcoach.trainer.data.Intensity
 import com.aifootballcoach.trainer.data.PitchSpace
 import com.aifootballcoach.trainer.data.SessionBrief
+import com.aifootballcoach.trainer.theme.CoachColors
 import com.aifootballcoach.trainer.theme.CoachTheme
 import com.aifootballcoach.trainer.ui.brief.BriefConditionsScreen
 import com.aifootballcoach.trainer.ui.brief.BriefFocusScreen
@@ -71,6 +83,18 @@ class ScreenSnapshotTest {
                 player()
                 RecordDrillSheet(sem, onSave = { _, _, _ -> }, onDismiss = {}, initialAttempts = "100", initialSuccesses = "70")
             }
+        }
+        snapshot("04-player-stats-help") {
+            PlayerScreen(player = sem, profile = profile, onBack = {}, onRecordDrill = {}, statsHelpOpen = true)
+        }
+        snapshot("04-player-load-error") {
+            PlayerScreen(
+                player = sem,
+                profile = null,
+                loadError = "Geen verbinding met de server. Controleer je internet en probeer het opnieuw.",
+                onBack = {},
+                onRecordDrill = {},
+            )
         }
     }
 
@@ -161,6 +185,42 @@ class ScreenSnapshotTest {
                 onSend = {},
                 onBack = {},
             )
+        }
+    }
+
+    @Test
+    fun renderSessionsTab() {
+        val today = LocalDate(2026, 11, 18)
+        val team = repository.loadTeam()
+        fun session(date: LocalDate, theme: String, sentTo: Int? = null) =
+            SessionDraft(day = "", dateLabel = "", theme = theme, minutes = 90, sentTo = sentTo, date = date)
+        val sessions = SessionLists.build(
+            today = today,
+            team = team,
+            draft = session(LocalDate(2026, 11, 19), "Druk zetten en omschakelen"),
+            sent = listOf(
+                session(LocalDate(2026, 11, 17), "Afwerken onder druk", sentTo = 14),
+                session(LocalDate(2026, 11, 12), "Opbouwen van achteruit", sentTo = 15),
+                session(LocalDate(2026, 11, 10), "Tegendruk", sentTo = 13),
+                session(LocalDate(2026, 11, 5), "Rondo en omschakelen", sentTo = 16),
+            ),
+        )
+        snapshot("22-sessions") {
+            Box(Modifier.background(CoachColors.Paper)) {
+                SessionsScreen(sessions, squadSize = 18, onNewSession = {}, onOpenUpcoming = {}, contentPadding = PaddingValues(0.dp))
+                CoachBottomBar(Tab.Sessions, onSelect = {}, modifier = Modifier.align(Alignment.BottomCenter).padding(16.dp))
+            }
+        }
+        snapshot("22-sessions-empty") {
+            Box(Modifier.background(CoachColors.Paper)) {
+                SessionsScreen(
+                    SessionLists.build(today, team, draft = null, sent = emptyList()),
+                    squadSize = 18,
+                    onNewSession = {},
+                    onOpenUpcoming = {},
+                    contentPadding = PaddingValues(0.dp),
+                )
+            }
         }
     }
 
