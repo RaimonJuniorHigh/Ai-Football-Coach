@@ -51,6 +51,12 @@ object SquadInsights {
     fun nextSession(today: LocalDate, team: Team): PlannedSession {
         val date = nextTrainingDay(today, team.trainingDays)
             ?: return PlannedSession("Geen trainingsdag", "Kies trainingsdagen bij je team", team.sessionMinutes)
-        return PlannedSession(date.dayName(), date.shortLabel(), team.sessionMinutes)
+        return PlannedSession(date.dayName(), date.shortLabel(), team.sessionMinutes, date)
     }
+
+    /** De komende [count] trainingsdagen vanaf vandaag, voor het tabblad Trainingen. */
+    fun upcomingTrainingDays(today: LocalDate, days: Set<Weekday>, count: Int): List<LocalDate> =
+        generateSequence(nextTrainingDay(today, days)) { nextTrainingDay(it.plus(1, DateTimeUnit.DAY), days) }
+            .take(count)
+            .toList()
 }

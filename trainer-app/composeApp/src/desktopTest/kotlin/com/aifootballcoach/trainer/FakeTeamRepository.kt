@@ -73,4 +73,5 @@ class FakeTeamRepository : TeamRepository {
         blocks = SessionPlanner.blocksFor(brief, available = 4, reasons = focusSuggestions().associate { it.title to it.reason }),
     )
     override fun sendDraft(draft: SessionDraft, homeExercises: Boolean) = Unit
+    override fun sentSessions(): List<SessionDraft> = emptyList()
 }

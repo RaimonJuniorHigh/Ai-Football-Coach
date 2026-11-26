@@ -1,5 +1,7 @@
 package com.aifootballcoach.trainer.data
 
+import kotlinx.datetime.LocalDate
+
 enum class Position(val label: String) {
     Keeper("Keeper"),
     Defence("Verdediging"),
@@ -45,6 +47,8 @@ data class SessionDraft(
     val blocks: List<SessionBlock> = emptyList(),
     /** How many players it was sent to, or null while it's still a draft. */
     val sentTo: Int? = null,
+    /** The day of the training, so the Trainingen tab can put it on the right date. */
+    val date: LocalDate? = null,
 )
 
 /** One part of a session, e.g. a warm-up or a drill, that the trainer accepts, edits or skips. */
@@ -72,6 +76,7 @@ data class PlannedSession(
     val day: String,
     val dateLabel: String,
     val minutes: Int,
+    val date: LocalDate? = null,
 )
 
 /** A focus theme suggested from the squad's stats, with why. */
