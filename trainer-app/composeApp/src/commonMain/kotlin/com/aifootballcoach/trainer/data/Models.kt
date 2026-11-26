@@ -41,6 +41,24 @@ data class SessionDraft(
     val dateLabel: String,
     val theme: String,
     val minutes: Int,
+    /** The parts of the session in order, see [SessionPlanner]. */
+    val blocks: List<SessionBlock> = emptyList(),
+    /** How many players it was sent to, or null while it's still a draft. */
+    val sentTo: Int? = null,
+)
+
+/** One part of a session, e.g. a warm-up or a drill, that the trainer accepts, edits or skips. */
+data class SessionBlock(
+    val id: String,
+    val drill: String,
+    val summary: String,
+    val minutes: Int,
+    val intensity: Intensity,
+    val space: PitchSpace,
+    val players: Int,
+    val howItWorks: String,
+    /** Why this block is in the session, e.g. "3 spelers onder de 9 van 20". */
+    val why: List<String>,
 )
 
 /** A "Needs you" item on the Today screen. */

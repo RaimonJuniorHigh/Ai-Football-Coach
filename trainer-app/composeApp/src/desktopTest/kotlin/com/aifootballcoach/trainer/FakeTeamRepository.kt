@@ -12,6 +12,7 @@ import com.aifootballcoach.trainer.data.PlayerStat
 import com.aifootballcoach.trainer.data.Position
 import com.aifootballcoach.trainer.data.SessionBrief
 import com.aifootballcoach.trainer.data.SessionDraft
+import com.aifootballcoach.trainer.data.SessionPlanner
 import com.aifootballcoach.trainer.data.SquadInsights
 import com.aifootballcoach.trainer.data.StatType
 import com.aifootballcoach.trainer.data.Team
@@ -64,5 +65,12 @@ class FakeTeamRepository : TeamRepository {
     override fun nextSession() = PlannedSession("Donderdag", "Do 5 nov", minutes = 90)
     override fun focusSuggestions(): List<FocusSuggestion> = SquadInsights.focusSuggestions(stats)
     override fun nextSessionDraft(): SessionDraft? = null
-    override fun draftSession(brief: SessionBrief) = SessionDraft("Donderdag", "Do 5 nov", brief.focus.joinToString(", "), 90)
+    override fun draftSession(brief: SessionBrief) = SessionDraft(
+        "Donderdag",
+        "Do 5 nov",
+        brief.focus.joinToString(", "),
+        90,
+        blocks = SessionPlanner.blocksFor(brief, available = 4, reasons = focusSuggestions().associate { it.title to it.reason }),
+    )
+    override fun sendDraft(draft: SessionDraft, homeExercises: Boolean) = Unit
 }

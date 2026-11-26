@@ -114,7 +114,7 @@ private fun DraftCard(draft: SessionDraft, onReview: () -> Unit) {
             Icon(CoachIcons.Plus, contentDescription = null, tint = CoachColors.Ink, modifier = Modifier.size(10.dp))
             Spacer(Modifier.width(6.dp))
             Text(
-                "CONCEPT KLAAR",
+                if (draft.sentTo == null) "CONCEPT KLAAR" else "VERSTUURD",
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 10.sp,
@@ -131,18 +131,21 @@ private fun DraftCard(draft: SessionDraft, onReview: () -> Unit) {
         )
         Spacer(Modifier.height(6.dp))
         Text(
-            "${draft.theme} · ${draft.minutes} min",
+            if (draft.sentTo == null) "${draft.theme} · ${draft.minutes} min" else "${draft.minutes} min · verstuurd naar ${draft.sentTo} spelers",
             style = MaterialTheme.typography.labelSmall.copy(fontSize = 13.sp),
             color = CoachColors.OnPitchMuted,
         )
-        Spacer(Modifier.height(16.dp))
-        PillButton(
-            text = "Concept bekijken",
-            onClick = onReview,
-            containerColor = CoachColors.Card,
-            contentColor = CoachColors.Ink,
-            height = 46.dp,
-        )
+        // TODO: open the approved session (design 08) once it's sent.
+        if (draft.sentTo == null && draft.blocks.isNotEmpty()) {
+            Spacer(Modifier.height(16.dp))
+            PillButton(
+                text = "Concept bekijken",
+                onClick = onReview,
+                containerColor = CoachColors.Card,
+                contentColor = CoachColors.Ink,
+                height = 46.dp,
+            )
+        }
     }
 }
 

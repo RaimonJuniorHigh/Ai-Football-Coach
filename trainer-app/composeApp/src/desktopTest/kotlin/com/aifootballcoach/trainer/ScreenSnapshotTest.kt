@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.Density
 import com.aifootballcoach.trainer.data.Availability
 import com.aifootballcoach.trainer.data.Intensity
 import com.aifootballcoach.trainer.data.PitchSpace
+import com.aifootballcoach.trainer.data.SessionBrief
 import com.aifootballcoach.trainer.theme.CoachTheme
 import com.aifootballcoach.trainer.ui.brief.BriefConditionsScreen
 import com.aifootballcoach.trainer.ui.brief.BriefFocusScreen
@@ -20,10 +21,14 @@ import com.aifootballcoach.trainer.ui.onboarding.TeamSetupScreen
 import com.aifootballcoach.trainer.ui.onboarding.WelcomeScreen
 import com.aifootballcoach.trainer.ui.player.PlayerScreen
 import com.aifootballcoach.trainer.ui.player.RecordDrillSheet
+import com.aifootballcoach.trainer.ui.session.BlockStatus
+import com.aifootballcoach.trainer.ui.session.EditBlockScreen
+import com.aifootballcoach.trainer.ui.session.ReviewBlocksScreen
+import com.aifootballcoach.trainer.ui.session.SendSessionScreen
 import java.io.File
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertTrue
+import kotlinx.coroutines.runBlocking
 
 /**
  * Renders each screen to a PNG in build/snapshots so the UI can be compared
@@ -116,6 +121,45 @@ class ScreenSnapshotTest {
                     "Concept voor een half veld opgeslagen",
                 ),
                 stepsDone = 2,
+            )
+        }
+    }
+
+    @Test
+    fun renderSessionScreens() {
+        val brief = SessionBrief(
+            session = repository.nextSession(),
+            absentPlayerIds = setOf("4"),
+            focus = listOf("Verdedigen", "Passen"),
+            space = PitchSpace.Half,
+            intensity = Intensity.Medium,
+            notes = "",
+        )
+        val blocks = repository.draftSession(brief).blocks
+        snapshot("07-review-block") {
+            ReviewBlocksScreen(
+                blocks = blocks,
+                index = 1,
+                statuses = mapOf(blocks[0].id to BlockStatus.Accepted),
+                onAccept = {},
+                onEdit = {},
+                onSkip = {},
+                onClose = {},
+            )
+        }
+        snapshot("20-edit-block") { EditBlockScreen(blocks[1], number = 2, onSave = {}, onCancel = {}) }
+        snapshot("21-send") {
+            SendSessionScreen(
+                totalBlocks = blocks.size,
+                acceptedBlocks = blocks.size - 1,
+                minutes = blocks.drop(1).sumOf { it.minutes },
+                editedBlocks = 1,
+                skippedBlocks = 1,
+                players = 4,
+                homeExercises = true,
+                onHomeExercisesChange = {},
+                onSend = {},
+                onBack = {},
             )
         }
     }
